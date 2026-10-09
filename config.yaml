@@ -1,22 +1,18 @@
 # Configuration générale. Aucune clé API ici (elles sont dans .env).
-
 gemini:
   text_model: "gemini-2.5-flash"
   image_model: "gemini-2.5-flash-image"
-
 elevenlabs:
   voice_id: "A_REMPLACER"
   model_id: "eleven_multilingual_v2"
-
 publish:
-  # Autorisés uniquement : private ou scheduled. JAMAIS public.
   privacy_status: "private"
-
 collect:
   max_age_hours: 48
   max_articles_per_source: 15
+  # Les articles sans date sont conservés : leur ancienneté est inconnue.
+  minimum_score: 10
   sources:
-    # --- Flux RSS : labs et éditeurs IA ---
     - name: "OpenAI"
       type: rss
       url: "https://openai.com/news/rss.xml"
@@ -32,7 +28,6 @@ collect:
     - name: "NVIDIA Blog"
       type: rss
       url: "https://blogs.nvidia.com/feed/"
-    # --- Presse tech ---
     - name: "TechCrunch IA"
       type: rss
       url: "https://techcrunch.com/category/artificial-intelligence/feed/"
@@ -41,18 +36,16 @@ collect:
       url: "https://www.theverge.com/rss/ai-artificial-intelligence/index.xml"
     - name: "MIT Technology Review"
       type: rss
-      url: "https://www.technologyreview.com/topic/artificial-intelligence/feed"
+      url: "https://www.technologyreview.com/feed/"
     - name: "Ars Technica"
       type: rss
       url: "https://feeds.arstechnica.com/arstechnica/technology-lab"
-    # --- Presse francophone ---
     - name: "Numerama"
       type: rss
       url: "https://www.numerama.com/feed/"
     - name: "Korben"
       type: rss
       url: "https://korben.info/feed"
-    # --- API communautaires ---
     - name: "Hacker News"
       type: hackernews
       url: "https://hacker-news.firebaseio.com/v0/topstories.json"
@@ -60,7 +53,6 @@ collect:
     - name: "Reddit r/artificial"
       type: rss
       url: "https://www.reddit.com/r/artificial/top/.rss?t=day"
-  # Mots-clés pour filtrer les articles pertinents (insensible à la casse)
   keywords:
     - "IA"
     - "AI"

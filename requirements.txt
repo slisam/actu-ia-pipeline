@@ -1,8 +1,8 @@
-python-dotenv>=1.0
-PyYAML>=6.0
-tenacity>=8.2
-requests>=2.31
-feedparser>=6.0
-google-genai>=0.3
-pytest>=8.0
-pytest-mock>=3.12
+python-dotenv==1.0.1
+PyYAML==6.0.2
+tenacity==9.0.0
+requests==2.32.3
+feedparser==6.0.11
+pytest==8.3.3
+pytest-mock==3.14.0
+rapidfuzz==3.10.1
