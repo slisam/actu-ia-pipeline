@@ -1,77 +1,29 @@
-# Configuration générale. Aucune clé API ici (elles sont dans .env).
+llm:
+  fast_model: gemini-1.5-flash
+  quality_model: gemini-1.5-pro
 
-gemini:
-  text_model: "gemini-2.5-flash"
-  image_model: "gemini-2.5-flash-image"
+voice:
+  model_id: eleven_turbo_v2
+  stability: 0.5
+  similarity_boost: 0.75
+  style: 0
 
-elevenlabs:
-  voice_id: "A_REMPLACER"
-  model_id: "eleven_multilingual_v2"
+video:
+  resolutions:
+    landscape:
+      width: 1920
+      height: 1080
+    portrait:
+      width: 1080
+      height: 1920
+  fps: 30
 
-publish:
-  # Autorisés uniquement : private ou scheduled. JAMAIS public.
-  privacy_status: "private"
+sources: []
 
-collect:
-  max_age_hours: 48
-  max_articles_per_source: 15
-  sources:
-    # --- Flux RSS : labs et éditeurs IA ---
-    - name: "OpenAI"
-      type: rss
-      url: "https://openai.com/news/rss.xml"
-    - name: "Google DeepMind"
-      type: rss
-      url: "https://deepmind.google/blog/rss.xml"
-    - name: "Google AI Blog"
-      type: rss
-      url: "https://blog.google/technology/ai/rss/"
-    - name: "Hugging Face"
-      type: rss
-      url: "https://huggingface.co/blog/feed.xml"
-    - name: "NVIDIA Blog"
-      type: rss
-      url: "https://blogs.nvidia.com/feed/"
-    # --- Presse tech ---
-    - name: "TechCrunch IA"
-      type: rss
-      url: "https://techcrunch.com/category/artificial-intelligence/feed/"
-    - name: "The Verge IA"
-      type: rss
-      url: "https://www.theverge.com/rss/ai-artificial-intelligence/index.xml"
-    - name: "MIT Technology Review"
-      type: rss
-      url: "https://www.technologyreview.com/topic/artificial-intelligence/feed"
-    - name: "Ars Technica"
-      type: rss
-      url: "https://feeds.arstechnica.com/arstechnica/technology-lab"
-    # --- Presse francophone ---
-    - name: "Numerama"
-      type: rss
-      url: "https://www.numerama.com/feed/"
-    - name: "Korben"
-      type: rss
-      url: "https://korben.info/feed"
-    # --- API communautaires ---
-    - name: "Hacker News"
-      type: hackernews
-      url: "https://hacker-news.firebaseio.com/v0/topstories.json"
-      min_score: 100
-    - name: "Reddit r/artificial"
-      type: rss
-      url: "https://www.reddit.com/r/artificial/top/.rss?t=day"
-  # Mots-clés pour filtrer les articles pertinents (insensible à la casse)
-  keywords:
-    - "IA"
-    - "AI"
-    - "intelligence artificielle"
-    - "LLM"
-    - "GPT"
-    - "Gemini"
-    - "Claude"
-    - "OpenAI"
-    - "Anthropic"
-    - "Mistral"
-    - "NVIDIA"
-    - "agent"
-    - "robot"
+paths:
+  data: data
+  output: output
+  logs: logs
+  prompts: prompts
+  assets: assets
+  tests: tests
