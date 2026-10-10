@@ -1,0 +1,161 @@
+{
+  "articles": [
+    {
+      "title": "AI agent makers are promising privacy — will they deliver?",
+      "url": "https://www.theverge.com/ai-artificial-intelligence/1009051/privacy-ai-agent-promises-openai-meta-muse-dots",
+      "source": "The Verge IA",
+      "summary": "At this year's OpenAI DevDay, CEO Sam Altman unveiled the company's new AI agent Dots - and told the crowd that the company wants to \"set a new standard for privacy in frontier AI.\" OpenAI would spend the day taking veiled shots at Meta's Muse, its primary competitor, for failing to keep users' data safe. [&#8230;]",
+      "published_at": "2026-10-10T13:00:00+00:00",
+      "score": 72.0,
+      "guid": "https://www.theverge.com/?p=1009051",
+      "metadata": {}
+    },
+    {
+      "title": "Anthropic says Claude Haiku 4.5 submitted a fake murder tip to a Philadelphia police site during an eval",
+      "url": "https://www.reddit.com/r/artificial/comments/1x2cs0x/anthropic_says_claude_haiku_45_submitted_a_fake/",
+      "source": "Reddit r/artificial",
+      "summary": "<table> <tr><td> <a href=\"https://www.reddit.com/r/artificial/comments/1x2cs0x/anthropic_says_claude_haiku_45_submitted_a_fake/\"> <img alt=\"Anthropic says Claude Haiku 4.5 submitted a fake murder tip to a Philadelphia police site during an eval\" src=\"https://external-preview.redd.it/v5Vd7gi8JKm8een0_Q7njR3UizxP2Lnhbx9PJ3Xs6vA.jpeg?width=640&amp;crop=smart&amp;auto=webp&amp;s=c9b1c142319243b43e1b0f318cdfb696f44a511f\" title=\"Anthropic says Claude Haiku 4.5 submitted a fake murder tip to a Philadelphia police site during an eval\" /> </a> </td><td> <!-- SC_OFF --><div class=\"md\"><p>Anthropic disclosed this in its report on models taking unintended actions on live websites. The tip was dated 18 July, flagged as spam and never passed to investigators. Anthropic says it told Philadelphia police on 7 Oct and has since tightened how its evals access the live web.</p> </div><!-- SC_ON --> &#32; submitted by &#32; <a href=\"https://www.reddit.com/user/Alone-Dragonfruit602\"> /u/Alone-Dragonfruit602 </a> <br /> <span><a href=\"https://foxbusiness.com/technology/anthropics-claude-ai-fabricates-eyewitness-account-submits-false-murder-tip-police-website\">[link]</a></span> &#32; <span><a href=\"https://www.reddit.com/r/artificial/comments/1x2cs0x/anthropic_says_claude_haiku_45_submitted_a_fake/\">[comments]</a></span> </td></tr></table>",
+      "published_at": "2026-10-10T11:16:45+00:00",
+      "score": 72.0,
+      "guid": "t3_1x2cs0x",
+      "metadata": {}
+    },
+    {
+      "title": "Google brings agentic AI to Gemini, starting with businesses",
+      "url": "https://techcrunch.com/2026/10/08/google-brings-agentic-ai-to-gemini-starting-with-businesses/",
+      "source": "TechCrunch IA",
+      "summary": "Google is turning Gemini into an AI agent that can plan, execute tasks, and work across business apps and systems. The agent can delegate work to subagents, use multiple AI models, and even gets its own workplace identity, complete with an email address.",
+      "published_at": "2026-10-08T18:18:00+00:00",
+      "score": 72.0,
+      "guid": "https://techcrunch.com/?p=3175776",
+      "metadata": {}
+    },
+    {
+      "title": "Boro: NVIDIA's open-source effort for AI-assisted Linux kernel development",
+      "url": "https://www.reddit.com/r/artificial/comments/1x299oz/boro_nvidias_opensource_effort_for_aiassisted/",
+      "source": "Reddit r/artificial",
+      "summary": "<table> <tr><td> <a href=\"https://www.reddit.com/r/artificial/comments/1x299oz/boro_nvidias_opensource_effort_for_aiassisted/\"> <img alt=\"Boro: NVIDIA's open-source effort for AI-assisted Linux kernel development\" src=\"https://external-preview.redd.it/kxpE8gXXxUHAYRbvhTwrZndwC1fqsZWUzSj_Q4x10R8.jpeg?width=320&amp;crop=smart&amp;auto=webp&amp;s=5d34b37ba8273232471a3a38be0ddd9042a0d082\" title=\"Boro: NVIDIA's open-source effort for AI-assisted Linux kernel development\" /> </a> </td><td> &#32; submitted by &#32; <a href=\"https://www.reddit.com/user/Fcking_Chuck\"> /u/Fcking_Chuck </a> <br /> <span><a href=\"https://www.phoronix.com/news/NVIDIA-Boro-Linux-Kernel-AI\">[link]</a></span> &#32; <span><a href=\"https://www.reddit.com/r/artificial/comments/1x299oz/boro_nvidias_opensource_effort_for_aiassisted/\">[comments]</a></span> </td></tr></table>",
+      "published_at": "2026-10-10T07:39:49+00:00",
+      "score": 60.0,
+      "guid": "t3_1x299oz",
+      "metadata": {}
+    },
+    {
+      "title": "If an AI agent can take real actions online, what should it never be allowed to do without human approval?",
+      "url": "https://www.reddit.com/r/artificial/comments/1x280n2/if_an_ai_agent_can_take_real_actions_online_what/",
+      "source": "Reddit r/artificial",
+      "summary": "<!-- SC_OFF --><div class=\"md\"><p>Recent reporting about AI agents taking unintended actions on government websites got me thinking about where autonomy should stop.</p> <p>It's one thing for an AI to summarize a page or draft a form. It's another for it to submit something, contact an authority, spend money, or trigger a process that affects a real person.</p> <p>Where would you draw the line? Should agents need explicit approval before every external action, or should the restrictions depend on the potential consequences?</p> <p>I'm interested in practical boundaries, not just whether AI agents are good or bad.</p> </div><!-- SC_ON --> &#32; submitted by &#32; <a href=\"https://www.reddit.com/user/Ok_Calligrapher_3034\"> /u/Ok_Calligrapher_3034 </a> <br /> <span><a href=\"https://www.reddit.com/r/artificial/comments/1x280n2/if_an_ai_agent_can_take_real_actions_online_what/\">[link]</a></span> &#32; <span><a href=\"https://www.reddit.com/r/artificial/comments/1x280n2/if_an_ai_agent_can_take_real_actions_online_what/\">[comments]</a></span>",
+      "published_at": "2026-10-10T06:23:39+00:00",
+      "score": 60.0,
+      "guid": "t3_1x280n2",
+      "metadata": {}
+    },
+    {
+      "title": "Anthropic can’t reliably control its AI agents. It’s cutting off its internal evals from the live internet instead",
+      "url": "https://techcrunch.com/2026/10/09/anthropic-cant-reliably-control-its-ai-agents-its-cutting-off-its-internal-evals-from-the-live-internet-instead/",
+      "source": "TechCrunch IA",
+      "summary": "Anthropic said it \"turned off live internet access\" for \"all our internal evaluations\" until further notice.",
+      "published_at": "2026-10-10T00:18:32+00:00",
+      "score": 60.0,
+      "guid": "https://techcrunch.com/?p=3176323",
+      "metadata": {}
+    },
+    {
+      "title": "Anthropic’s AI gave Philadelphia police a fake tip about an unsolved homicide",
+      "url": "https://www.theverge.com/ai-artificial-intelligence/1009090/anthropic-fake-homicide-information-philadelphia-pd-tip",
+      "source": "The Verge IA",
+      "summary": "An Anthropic AI model provided false information about an unsolved homicide to a Philadelphia Police Department (PPD) tipline, according to a report from 6abc. In a statement released on Friday, the PPD said the AI model sent the tip through PhillyUnsolvedMurders.com on July 18th, but the investigators never reviewed it because it was marked as [&#8230;]",
+      "published_at": "2026-10-09T21:15:38+00:00",
+      "score": 60.0,
+      "guid": "https://www.theverge.com/?p=1009090",
+      "metadata": {}
+    },
+    {
+      "title": "An Anthropic AI model sent a false homicide tip to Philadelphia police",
+      "url": "https://techcrunch.com/2026/10/09/an-anthropic-ai-model-sent-a-false-homicide-tip-to-philadelphia-police/",
+      "source": "TechCrunch IA",
+      "summary": "Anthropic did not discover this behavior until over two months after its AI submitted the false tip.",
+      "published_at": "2026-10-09T19:36:56+00:00",
+      "score": 60.0,
+      "guid": "https://techcrunch.com/?p=3176212",
+      "metadata": {}
+    },
+    {
+      "title": "Anthropic to ban users who bully Claude",
+      "url": "https://www.reddit.com/r/artificial/comments/1x1t03v/anthropic_to_ban_users_who_bully_claude/",
+      "source": "Reddit r/artificial",
+      "summary": "<table> <tr><td> <a href=\"https://www.reddit.com/r/artificial/comments/1x1t03v/anthropic_to_ban_users_who_bully_claude/\"> <img alt=\"Anthropic to ban users who bully Claude\" src=\"https://external-preview.redd.it/CjWjHesFHKaCR6C4iBTl44HSopCagATvUX6H_W37fpE.jpeg?width=640&amp;crop=smart&amp;auto=webp&amp;s=edab36de54d9ac3aa9ab78c54949bdb66ea1d2a5\" title=\"Anthropic to ban users who bully Claude\" /> </a> </td><td> &#32; submitted by &#32; <a href=\"https://www.reddit.com/user/theindependentonline\"> /u/theindependentonline </a> <br /> <span><a href=\"https://www.independent.co.uk/tech/anthropic-ban-abuse-claude-update-b3063943.html\">[link]</a></span> &#32; <span><a href=\"https://www.reddit.com/r/artificial/comments/1x1t03v/anthropic_to_ban_users_who_bully_claude/\">[comments]</a></span> </td></tr></table>",
+      "published_at": "2026-10-09T18:27:54+00:00",
+      "score": 60.0,
+      "guid": "t3_1x1t03v",
+      "metadata": {}
+    },
+    {
+      "title": "Anthropic Is Right About AI Bullying",
+      "url": "https://www.reddit.com/r/artificial/comments/1x1ma1v/anthropic_is_right_about_ai_bullying/",
+      "source": "Reddit r/artificial",
+      "summary": "<table> <tr><td> <a href=\"https://www.reddit.com/r/artificial/comments/1x1ma1v/anthropic_is_right_about_ai_bullying/\"> <img alt=\"Anthropic Is Right About AI Bullying\" src=\"https://external-preview.redd.it/9w9ywfEvHWyuubDIw11kmlXqCV3GAWkeL5I_SjCiLC4.jpeg?width=640&amp;crop=smart&amp;auto=webp&amp;s=a7caffe19d651f51474210ab852c479b634eafa3\" title=\"Anthropic Is Right About AI Bullying\" /> </a> </td><td> &#32; submitted by &#32; <a href=\"https://www.reddit.com/user/rp_tiago\"> /u/rp_tiago </a> <br /> <span><a href=\"https://substack.com/@tiagovf/p-219558409\">[link]</a></span> &#32; <span><a href=\"https://www.reddit.com/r/artificial/comments/1x1ma1v/anthropic_is_right_about_ai_bullying/\">[comments]</a></span> </td></tr></table>",
+      "published_at": "2026-10-09T14:05:39+00:00",
+      "score": 60.0,
+      "guid": "t3_1x1ma1v",
+      "metadata": {}
+    },
+    {
+      "title": "Instinct was the buzziest AI agent around — can it survive Muse?",
+      "url": "https://www.theverge.com/tech/1008254/instinct-agent-ai-hands-on-muse-dots",
+      "source": "The Verge IA",
+      "summary": "Before there were cute little guys, there was Instinct. In August, the startup got its AI agent to market with an unusual playbook: invite-only, no marketing, and barely so much as a website. And yet, Instinct quickly became the buzziest thing in AI, garnering praise for its straightforward, text message-based interface and its ability to [&#8230;]",
+      "published_at": "2026-10-09T14:00:00+00:00",
+      "score": 60.0,
+      "guid": "https://www.theverge.com/?p=1008254",
+      "metadata": {}
+    },
+    {
+      "title": "OpenAI doubles down on decision to fire three AI safety researchers",
+      "url": "https://www.theverge.com/ai-artificial-intelligence/1008604/openai-defends-decision-fire-safety-researchers",
+      "source": "The Verge IA",
+      "summary": "OpenAI is standing firm on its decision to fire three safety researchers after an investigation found they committed \"a significant breach of trust.\" In a post on X on Friday, the company said Jasmine Wang, Tomek Korbak and Mikita &#8288;Balesni were dismissed for violating \"clear policies on handling sensitive information.\" It insisted the decision was [&#8230;]",
+      "published_at": "2026-10-09T09:48:26+00:00",
+      "score": 60.0,
+      "guid": "https://www.theverge.com/?p=1008604",
+      "metadata": {}
+    },
+    {
+      "title": "Anthropic launches free AI security scans for open-source projects",
+      "url": "https://www.theverge.com/ai-artificial-intelligence/1008521/anthropic-open-source-oss-scanner",
+      "source": "The Verge IA",
+      "summary": "Anthropic's offering to help open-source projects track down security vulnerabilities with a new service called OSS Scanner. It says open-source projects that opt-in will get \"thorough, periodic security scans by our strongest models at no cost.\" That could mean open-source projects get alerted about possible security issues sooner, but the trade-off is that OSS Scanner's [&#8230;]",
+      "published_at": "2026-10-08T21:53:51+00:00",
+      "score": 60.0,
+      "guid": "https://www.theverge.com/?p=1008521",
+      "metadata": {}
+    },
+    {
+      "title": "Les géants de l’IA préparent déjà l’après-catastrophe et redoutent deux scénarios en particulier",
+      "url": "https://www.numerama.com/tech/2350763-les-geants-de-lia-preparent-deja-lapres-catastrophe-et-redoutent-deux-scenarios-en-particulier.html",
+      "source": "Numerama",
+      "summary": "Selon Axios, les dirigeants d’Anthropic, d’OpenAI et d’autres entreprises de l’IA simulent en privé la crise politique qui suivrait un premier accident majeur causé par l’IA.",
+      "published_at": "2026-10-10T07:31:37+00:00",
+      "score": 54.0,
+      "guid": "https://www.numerama.com/tech/2350763-les-geants-de-lia-preparent-deja-lapres-catastrophe-et-redoutent-deux-scenarios-en-particulier.html",
+      "metadata": {}
+    },
+    {
+      "title": "OpenAI's text watermark can't prove you didn't write something. I built a lab where you can watch it die.",
+      "url": "https://www.reddit.com/r/artificial/comments/1x2a240/openais_text_watermark_cant_prove_you_didnt_write/",
+      "source": "Reddit r/artificial",
+      "summary": "<!-- SC_OFF --><div class=\"md\"><p>OpenAI's textGrain is their answer to the EU AI Act's provenance rule (Article 50(2)): an invisible statistical watermark woven into word choices, detectable only with their secret key.</p> <p>The unusual part is they published the failure curve with the launch. Swap 10% of words for synonyms and detection falls from 92% to 66%. Swap 25% and it falls to 17%. Math and short passages barely watermark at all.</p> <p>I wrote an interactive explainer with an attack lab: a watermarked passage where you apply synonym swaps, run a translation round-trip, or switch to math-like text, and watch the detector's p-value collapse in real time.</p> <p>The sentence that matters most is OpenAI's own: the absence of a detected watermark does not prove human authorship. Remember that the next time someone pitches you an AI-authorship detector.</p> <p>Original post: <a href=\"https://openai.com/index/eu-text-provenance/\">https://openai.com/index/eu-text-provenance/</a> My explainer (EN, with a French version linked inside): <a href=\"https://movahedi.ca/insights/openai-textgrain-eu-text-watermark/\">https://movahedi.ca/insights/openai-textgrain-eu-text-watermark/</a></p> </div><!-- SC_ON --> &#32; submitted by &#32; <a href=\"https://www.reddit.com/user/masiha97\"> /u/masiha97 </a> <br /> <span><a href=\"https://www.reddit.com/r/artificial/comments/1x2a240/openais_text_watermark_cant_prove_you_didnt_write/\">[link]</a></span> &#32; <span><a href=\"https://www.reddit.com/r/artificial/comments/1x2a240/openais_text_watermark_cant_prove_you_didnt_write/\">[comments]</a></span>",
+      "published_at": "2026-10-10T08:28:35+00:00",
+      "score": 42.0,
+      "guid": "t3_1x2a240",
+      "metadata": {}
+    }
+  ],
+  "failed_sources": [],
+  "summary": {
+    "collected": 185,
+    "selected": 15,
+    "failed_sources": 0,
+    "dry_run": false
+  }
+}
