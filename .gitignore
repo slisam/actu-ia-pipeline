@@ -1,20 +1,28 @@
-# Secrets
-.env
-
-# Python
+# Environnement Python
 venv/
-.venv/
 __pycache__/
-*.pyc
+*.py[cod]
+*$py.class
 .pytest_cache/
 
-# Données générées
-data/*.db
-output/*
-!output/.gitkeep
-logs/*
-!logs/.gitkeep
+# Fichiers d'environnement
+.env
 
-# Divers
-.DS_Store
+# Sorties et logs
+output/
+logs/
 *.log
+
+# Base de données
+data/*.db
+
+# Secrets YouTube et OAuth
+client_secret*.json
+token*.json
+credentials.json
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
