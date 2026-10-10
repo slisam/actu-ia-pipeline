@@ -1,0 +1,79 @@
+name: Run collect
+
+on:
+  push:
+    branches: [main, run-collect]
+    paths:
+      - '.github/workflows/run-collect.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: collect-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install
+        run: pip install -r requirements.txt
+      - name: Tests
+        run: pytest
+      - name: Run real collection
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p output
+          rm -f output/collect.json output/collect.log
+          python -u -c 'from src.collect.cli import main; main()' --output output 2>&1 | tee output/collect.log
+      - name: Validate output
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          path = Path('output/collect.json')
+          if not path.is_file():
+              raise SystemExit('ERROR: collector did not create output/collect.json')
+          payload = json.loads(path.read_text(encoding='utf-8'))
+          if not isinstance(payload, dict):
+              raise SystemExit('ERROR: expected a JSON object')
+          if not isinstance(payload.get('articles'), list) or not isinstance(payload.get('failed_sources'), list) or not isinstance(payload.get('summary'), dict):
+              raise SystemExit('ERROR: invalid collection output schema')
+          print(json.dumps(payload['summary'], ensure_ascii=False, indent=2))
+          print(json.dumps(payload['failed_sources'], ensure_ascii=False, indent=2))
+          if payload['summary'].get('dry_run') is not False:
+              raise SystemExit('ERROR: expected a real collection, not a dry-run')
+          if not payload['articles']:
+              raise SystemExit('ERROR: no articles selected; inspect collect.log, failed_sources and config.yaml filters')
+          PY
+      - name: Upload diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: collect-${{ github.run_id }}
+          path: |
+            output/collect.json
+            output/collect.log
+          if-no-files-found: warn
+      - name: Commit successful output
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git add -f output/collect.json output/collect.log
+          if ! git diff --cached --quiet; then
+            git commit -m 'chore: résultat collect.json [skip ci]'
+            git push
+          fi
