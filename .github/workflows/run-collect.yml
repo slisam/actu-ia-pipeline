@@ -1,0 +1,38 @@
+name: Run collect
+
+on:
+  push:
+    branches: [run-collect]
+    paths:
+      - '.github/workflows/run-collect.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install
+        run: pip install -r requirements.txt
+      - name: Run collect (dry-run)
+        run: python -m src.collect.cli --dry-run 2>&1 | tee collect.log
+        continue-on-error: true
+      - name: Gather output
+        run: |
+          mkdir -p output
+          f=$(find . -name collect.json -not -path './output/*' -not -path './.git/*' | head -n1)
+          if [ -n "$f" ]; then cp "$f" output/collect.json; else echo '{"error":"collect.json introuvable"}' > output/collect.json; fi
+          cp collect.log output/collect.log
+      - name: Commit output
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git add -f output/collect.json output/collect.log
+          git commit -m 'chore: résultat collect.json [skip ci]' || echo 'rien à commiter'
+          git push
