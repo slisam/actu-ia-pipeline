@@ -3,6 +3,7 @@ import copy
 import hashlib
 import json
 import logging
+import os
 import re
 from datetime import datetime
 from pathlib import Path
@@ -96,7 +97,10 @@ def run_episode(config: dict, publish: bool = False, demo: bool = False,
             if silent:
                 config["speech"]["provider"] = "demo"
             # Les empreintes couvrent le script et les paramètres du rendu.
-            signature = hashlib.sha256(json.dumps({"pipeline_version": __version__, "script": script, "video": config["video"], "speech": config["speech"]}, sort_keys=True).encode()).hexdigest()
+            speech_signature = dict(config["speech"])
+            if speech_signature.get("provider") == "elevenlabs":
+                speech_signature["effective_voice_id"] = speech_signature.get("elevenlabs", {}).get("voice_id") or os.getenv("ELEVENLABS_VOICE_ID", "")
+            signature = hashlib.sha256(json.dumps({"pipeline_version": __version__, "script": script, "video": config["video"], "speech": speech_signature}, sort_keys=True).encode()).hexdigest()
             manifest_path = directory / "manifest.json"
             try:
                 previous = json.loads(manifest_path.read_text(encoding="utf-8")) if manifest_path.exists() else {}

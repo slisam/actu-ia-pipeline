@@ -17,6 +17,7 @@ from .speech import ffmpeg_binary
 from .state import State
 from .writer import WriterError
 from .browser import BrowserError
+from .elevenlabs import ElevenLabsError
 
 LOGGER = logging.getLogger("pipelineia")
 
@@ -60,6 +61,12 @@ def doctor(config: dict) -> int:
     elif speech == "system":
         checks["voix_locale_installee"] = os.name == "nt"
         checks["voix_note"] = "Une voix fr-FR doit être installée ; demo vérifie la synthèse réelle."
+    elif speech == "elevenlabs":
+        voice = config.get("speech", {}).get("elevenlabs", {})
+        checks["cle_elevenlabs_presente"] = bool(os.getenv("ELEVENLABS_API_KEY", "").strip())
+        checks["voix_elevenlabs_configuree"] = bool(voice.get("voice_id") or os.getenv("ELEVENLABS_VOICE_ID", "").strip())
+        checks["modele_elevenlabs_configure"] = bool(voice.get("model_id"))
+        checks["voix_note"] = "Présence locale uniquement : abonnement, crédits et accès à la voix à vérifier dans ElevenLabs."
     elif speech == "google":
         checks["voix_note"] = "Identifiants ADC et facturation Cloud à vérifier côté Google."
     else:
@@ -114,13 +121,13 @@ def main(argv: list[str] | None = None) -> int:
                 failed |= result["status"] == "publication_incomplete"
             except Exception as exc:
                 LOGGER.error("Épisode %s interrompu (%s). Le script validé est conservé.", episode_id, type(exc).__name__)
-                if isinstance(exc, (WriterError, BrowserError, ValueError)):
+                if isinstance(exc, (WriterError, BrowserError, ElevenLabsError, ValueError)):
                     LOGGER.error("%s", str(exc))
                 failed = True
         return 2 if failed else 0
     except Exception as exc:
         # Pas de traceback/corps distant : les exceptions réseau peuvent contenir des jetons.
-        safe_types = (ValueError, FileNotFoundError, WriterError, BrowserError)
+        safe_types = (ValueError, FileNotFoundError, WriterError, BrowserError, ElevenLabsError)
         message = str(exc) if isinstance(exc, safe_types) else "Consulter le diagnostic local ; aucun basculement vers une API payante."
         LOGGER.error("%s : %s", type(exc).__name__, message)
         return 1

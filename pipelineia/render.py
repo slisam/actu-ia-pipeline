@@ -15,6 +15,7 @@ from urllib.parse import urlparse
 from PIL import Image, ImageDraw, ImageFont
 
 from .speech import ffmpeg_binary
+from .alignment import aligned_timeline
 
 LOGGER = logging.getLogger(__name__)
 DEFAULT_FORMATS = {"vertical": {"width": 1080, "height": 1920},
@@ -166,11 +167,14 @@ def render_episode(script: dict, audio: Path, output_dir: Path, config: dict,
     if not .65 <= tempo <= 1.45:
         raise ValueError(f"Voix de {measured:.1f}s incompatible avec {duration:.0f}s "
                          "sans accélération excessive; régénérez le script ou ajustez speech.rate.")
-    timeline = build_timeline(script, speech_seconds, duration)
+    timeline, alignment_status = aligned_timeline(script, Path(audio), measured, speech_seconds, duration)
+    method = "elevenlabs_character_alignment" if timeline is not None else "estimated_word_proportions"
+    if timeline is None:
+        timeline = build_timeline(script, speech_seconds, duration)
     (output_dir / "captions.srt").write_text("\n\n".join(
         f"{i}\n{_stamp(cue['start'])} --> {_stamp(cue['end'])}\n{cue['caption']}"
         for i, cue in enumerate(timeline, 1)) + "\n", encoding="utf-8")
-    (output_dir / "timing.json").write_text(json.dumps({"method": "estimated_word_proportions",
+    (output_dir / "timing.json").write_text(json.dumps({"method": method, "alignment_status": alignment_status,
         "input_audio_seconds": measured, "tempo": tempo, "duration_seconds": duration,
         "cues": timeline}, ensure_ascii=False, indent=2), encoding="utf-8")
     available = video.get("formats", DEFAULT_FORMATS)

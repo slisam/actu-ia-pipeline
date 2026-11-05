@@ -46,3 +46,33 @@ def test_system_provider_uses_local_voice(tmp_path, monkeypatch):
     path = synthesize("Narration française.", tmp_path / "voice.wav", {"speech": {"provider": "system"}})
     assert calls == ["Narration française."]
     assert path.is_file()
+
+
+def test_elevenlabs_provider_uses_full_configuration(tmp_path, monkeypatch):
+    from unittest.mock import Mock
+    from pipelineia import elevenlabs
+    output = tmp_path / "voice.wav"
+    config = {"speech": {"provider": "elevenlabs", "elevenlabs": {"model_id": "configured"}}}
+    convert = Mock(return_value=output)
+    monkeypatch.setattr(elevenlabs, "synthesize_elevenlabs", convert)
+    assert synthesize("Narration française.", output, config) == output
+    convert.assert_called_once_with("Narration française.", output, config)
+
+
+def test_speech_cli_loads_credentials_from_local_env(tmp_path, monkeypatch):
+    from pipelineia import speech
+    from unittest.mock import Mock
+    import os
+    import yaml
+    monkeypatch.delenv("ELEVENLABS_API_KEY", raising=False)
+    (tmp_path / ".env").write_text("ELEVENLABS_API_KEY=local-secret\n", encoding="utf-8")
+    path = tmp_path / "config.yaml"
+    path.write_text(yaml.safe_dump({"speech": {"provider": "elevenlabs"},
+                                  "video": {"formats": {"vertical": {"width": 270, "height": 480}}}}), encoding="utf-8")
+    narration = tmp_path / "narration.txt"
+    narration.write_text("Une narration.", encoding="utf-8")
+    result = []
+    monkeypatch.setattr(speech, "synthesize", lambda *args: result.append(os.environ.get("ELEVENLABS_API_KEY")))
+    monkeypatch.setattr("sys.argv", ["speech", str(narration), str(tmp_path / "voice.wav"), "--config", str(path)])
+    speech.main()
+    assert result == ["local-secret"]

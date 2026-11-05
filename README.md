@@ -4,17 +4,17 @@ Des actualités IA en français transformées en vidéos de **60 secondes** : ac
 
 ## Le choix économique
 
-**Par défaut, Gemini API au niveau gratuit, avec une voix et un montage locaux** :
+**Par défaut, Gemini API au niveau gratuit, ElevenLabs pour la voix off et un montage local** :
 
 1. Collecte des annonces récentes dans les flux officiels OpenAI, Google, DeepMind et Hugging Face.
 2. Rédaction et vérification avec **Gemini API**, dans un projet au niveau gratuit confirmé.
-3. Voix gratuite sur l'ordinateur : **Windows SAPI en français** ou eSpeak sur Linux.
+3. Voix off française **ElevenLabs**, avec votre abonnement et une voix choisie dans votre compte.
 4. Cartes graphiques originales, montage FFmpeg et sous-titres.
 5. Exports **1080×1920**, **1080×1080** et **1920×1080**, puis publication sur les comptes configurés.
 
 Une seule clé suffit pour démarrer ; quatre emplacements sont prévus. **Lorsqu'un quota est atteint, le pipeline essaie immédiatement une clé d'un autre projet disponible.** Les clés d'un même projet partagent leur pause jusqu'au délai de reprise Google. Les appels sont bornés par épisode et par jour, avec des compteurs persistants. Si aucun projet n'est disponible, l'épisode attend la reprise des quotas.
 
-Les clés doivent appartenir à des projets au niveau gratuit, sans facturation payante activée. Le code n'active aucune facturation ; il ne peut cependant pas vérifier le statut distant du projet ni empêcher une facturation modifiée hors du pipeline. La voix et les cartes originales ne consomment aucune API. L'électricité, le calcul et l'hébergement restent à compter. [Connexion des clés](docs/API_KEYS.md) · [Coûts](docs/COSTS.md).
+Les clés Gemini doivent appartenir à des projets au niveau gratuit, sans facturation payante activée. Le code n'active aucune facturation Google ; il ne peut cependant pas vérifier le statut distant du projet ni empêcher une facturation modifiée hors du pipeline. ElevenLabs consomme les crédits de votre abonnement. L'audio est mis en cache pour éviter une nouvelle synthèse lors des reprises du montage. Les cartes et le montage sont locaux. [Connexion Gemini](docs/API_KEYS.md) · [Connexion ElevenLabs](docs/ELEVENLABS.md) · [Coûts](docs/COSTS.md).
 
 Le montage produit les vidéos à partir de cartes et de voix ; il ne génère pas de clips Veo et n'automatise pas Flow. Les anciens modes navigateur et Gemini CLI restent expérimentaux : les connexions réelles ont été refusées par Google lors des essais.
 
@@ -29,13 +29,15 @@ Python 3.11+ est nécessaire. Dans PowerShell, depuis le dossier du projet :
 .\.venv\Scripts\python.exe -m pipelineia run
 ```
 
-Avant `doctor` et `run`, ajouter au moins une clé dans `.env` et renseigner son projet et sa confirmation du niveau Free dans `config.yaml`, selon [API_KEYS.md](docs/API_KEYS.md). Le diagnostic n'effectue aucun appel de génération. `demo` utilise un exemple explicitement fictif ; `run` recherche une vraie actualité. Les vidéos apparaissent dans `output/`.
+Avant `doctor` et `run`, connecter au moins une clé Gemini selon [API_KEYS.md](docs/API_KEYS.md), puis ajouter `ELEVENLABS_API_KEY` et `ELEVENLABS_VOICE_ID` dans `.env` selon [ELEVENLABS.md](docs/ELEVENLABS.md). Le diagnostic n'effectue aucun appel de génération. `demo` utilise un exemple explicitement fictif et la voix configurée (donc des crédits ElevenLabs) ; `run` recherche une vraie actualité. Les vidéos apparaissent dans `output/`.
 
 Pour générer rapidement un exemple en basse résolution :
 
 ```powershell
 .\.venv\Scripts\python.exe -m pipelineia demo --quick
 ```
+
+Ajouter `--silent` pour vérifier uniquement le montage sans consommer de crédits ElevenLabs.
 
 ## Chaque jour, automatiquement
 
@@ -68,10 +70,10 @@ Chaque épisode quotidien utilise `output/AAAA-MM-JJ-actu-ia/` :
 - `script.json` : hook, scènes, preuves exactes et résultat du contrôle éditorial.
 - `voice.wav`, `narration.txt` : voix et texte.
 - `vertical.mp4`, `square.mp4`, `landscape.mp4` : exports de 60 secondes.
-- `captions.srt`, `timing.json` : sous-titres et repères estimés.
+- `captions.srt`, `timing.json` : sous-titres et méthode de synchronisation.
 - `manifest.json`, `publication.json` : empreintes des fichiers et états des publications.
 
-Les sous-titres utilisent un minutage estimé, sans alignement phonétique. La voix locale est économique ; une voix Google Cloud peut être choisie explicitement dans `config.yaml` si sa qualité est préférable.
+Les sous-titres utilisent les repères ElevenLabs lorsqu'ils correspondent à la narration et au fichier audio. Sinon, le minutage estimé est indiqué explicitement dans `timing.json`. La voix locale gratuite reste accessible avec `speech.provider: auto`.
 
 ## Sources et reprises
 
@@ -81,7 +83,7 @@ Une base SQLite locale garde les scripts et les états de publication. **Elle co
 
 ## Réglages et tests
 
-`config.yaml` choisit les sources, modèles, voix, formats et destinations. `.env.example` décrit les quatre emplacements de clés Gemini et les secrets sociaux optionnels. `llm.provider: api_pool` est le défaut ; les anciens fournisseurs restent optionnels. Google Cloud TTS (`speech.provider: google`) est une alternative explicite, jamais un repli automatique.
+`config.yaml` choisit les sources, modèles, voix, formats et destinations. `.env.example` décrit les quatre emplacements de clés Gemini, la connexion ElevenLabs et les secrets sociaux optionnels. `llm.provider: api_pool` et `speech.provider: elevenlabs` sont les défauts ; les autres fournisseurs restent optionnels, sans repli automatique.
 
 ```powershell
 .\.venv\Scripts\python.exe -m pytest -q

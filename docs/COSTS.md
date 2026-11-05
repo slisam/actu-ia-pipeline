@@ -2,9 +2,15 @@
 
 ## Choix retenu
 
-La chaîne par défaut est : RSS officiels → Gemini API au niveau gratuit → contrôle éditorial → voix locale française → cartes originales et FFmpeg → exports de60 secondes. L'interface Flow n'est pas automatisée et aucun clip Veo n'est nécessaire.
+La chaîne par défaut est : RSS officiels → Gemini API au niveau gratuit → contrôle éditorial → voix off ElevenLabs → cartes originales et FFmpeg → exports de 60 secondes. L'interface Flow n'est pas automatisée et aucun clip Veo n'est nécessaire.
 
-La voix Windows SAPI ou Linux eSpeak et les cartes n'ont aucun coût d'API. Le calcul, l'électricité, le stockage et l'hébergement public nécessaire à Instagram restent à compter. Un ordinateur déjà disponible évite un nouvel abonnement de serveur.
+ElevenLabs utilise un abonnement payant et ses crédits. Les cartes et le montage n'ont aucun coût d'API. Le calcul, l'électricité, le stockage et l'hébergement public nécessaire à Instagram restent à compter. La voix gratuite Windows SAPI ou Linux eSpeak reste une option explicite avec speech.provider:auto.
+
+## Abonnement ElevenLabs
+
+La page de tarifs consultée affiche Starter à 6 $/mois hors promotion avec 30 000 crédits et une licence commerciale. Flash v2.5 est présenté comme 50 % moins cher par caractère en API que les modèles standards. Pour 30 narrations de 800 à 1 200 caractères, l'ordre de grandeur est 12 000 à 18 000 crédits avec un tarif effectif de 0,5 crédit/caractère, avant variantes et éventuels multiplicateurs propres à la voix. Starter peut donc suffire pour démarrer à une vidéo quotidienne ; vérifier la consommation réelle dans le compte. [Tarifs ElevenLabs](https://elevenlabs.io/pricing), [modèles](https://elevenlabs.io/docs/overview/models).
+
+Le même audio sert aux trois formats. Une reprise du montage réutilise le cache ; une modification du texte, de la voix ou des paramètres peut demander une nouvelle synthèse. Le dépôt n'active aucune recharge et ne prend aucun abonnement. [Connexion et cache ElevenLabs](ELEVENLABS.md).
 
 ## Gemini gratuit
 

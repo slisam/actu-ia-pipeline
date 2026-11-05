@@ -45,7 +45,7 @@ Sur Linux, les dossiers montés doivent être accessibles à l'utilisateur du co
 
 Un incident réseau après une publication peut laisser l'état `uncertain`. Le pipeline ne réenvoie pas aveuglément la vidéo : il tente une vérification à distance lorsque l'API le permet. Sinon, consulter la plateforme et la base avant une intervention. Ne jamais supprimer la base pour relancer une publication. Les épisodes dont les sources dépassent news.max_age_hours sont marqués expired ; leur publication est ignorée.
 
-Les sous-titres sont estimés à partir de la narration, sans alignement phonétique payant. Un changement de voix ou de script peut modifier le rythme ; le rendu bloque les accélérations excessives et ne coupe pas la narration. La vérification par modèle réduit les inventions sans constituer une garantie de vérité. Les annonces sont attribuées à leurs éditeurs et les sources restent exportées.
+Les sous-titres utilisent les repères ElevenLabs vérifiés lorsqu'ils sont disponibles, adaptés au tempo du montage. Sinon, timing.json indique le minutage estimé. Conserver le cache vocal de l'épisode pour réutiliser l'audio sans nouvelle synthèse lors d'une reprise ; voir ELEVENLABS.md pour les réponses incertaines d'un appel facturable. Le rendu bloque les accélérations excessives et ne coupe pas la narration. La vérification par modèle réduit les inventions sans constituer une garantie de vérité.
 
 Si aucune actualité récente exploitable n'est disponible, aucune vidéo n'est générée. Les fichiers sont sous `output/AAAA-MM-JJ-actu-ia/` ; les logs tournants sous `logs/`. `publication.json` décrit les résultats par destination. Les codes de sortie sont 0 en cas de succès ou absence de nouvelle actualité, 2 pour une publication incomplète, 1 pour une autre erreur.
 

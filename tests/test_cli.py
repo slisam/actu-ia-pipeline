@@ -47,6 +47,22 @@ def test_doctor_calls_only_local_ffmpeg_check_and_never_generates(config, monkey
     assert "cle_gemini_presente" in caplog.text
 
 
+@pytest.mark.parametrize("has_voice", [True, False])
+def test_doctor_elevenlabs_never_generates_or_exposes_credentials(config, monkeypatch, caplog, has_voice):
+    config["speech"] = {"provider": "elevenlabs", "elevenlabs": {"model_id": "configured-model"}}
+    monkeypatch.setenv("GEMINI_API_KEY", "gemini-private")
+    monkeypatch.setenv("ELEVENLABS_API_KEY", "eleven-private")
+    monkeypatch.delenv("ELEVENLABS_VOICE_ID", raising=False)
+    if has_voice:
+        monkeypatch.setenv("ELEVENLABS_VOICE_ID", "selected-voice")
+    monkeypatch.setattr(cli, "ffmpeg_binary", lambda: "ffmpeg")
+    monkeypatch.setattr(cli.subprocess, "run", lambda *args, **kwargs: Mock(returncode=0))
+    monkeypatch.setattr("pipelineia.elevenlabs.requests.post", Mock(side_effect=AssertionError("Aucun appel facturable")))
+    with caplog.at_level(logging.INFO):
+        assert cli.doctor(config) == (0 if has_voice else 2)
+    assert "gemini-private" not in caplog.text and "eleven-private" not in caplog.text
+
+
 def test_doctor_cli_oauth_checks_presence_without_reading_credentials(config, tmp_path, monkeypatch, caplog):
     config["llm"]["provider"] = "gemini_cli"
     monkeypatch.setenv("GEMINI_CLI_HOME", str(tmp_path))
