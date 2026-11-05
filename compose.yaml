@@ -1,0 +1,13 @@
+services:
+  pipelineia:
+    build: .
+    init: true
+    env_file: .env
+    volumes:
+      - ./config.yaml:/app/config.yaml:ro
+      - ./data:/app/data
+      - ./output:/app/output
+      - ./logs:/app/logs
+      - gemini-login:/home/node/.gemini
+volumes:
+  gemini-login:

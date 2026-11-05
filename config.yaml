@@ -1,29 +1,49 @@
-llm:
-  fast_model: gemini-1.5-flash
-  quality_model: gemini-1.5-pro
-
-voice:
-  model_id: eleven_turbo_v2
-  stability: 0.5
-  similarity_boost: 0.75
-  style: 0
-
-video:
-  resolutions:
-    landscape:
-      width: 1920
-      height: 1080
-    portrait:
-      width: 1080
-      height: 1920
-  fps: 30
-
-sources: []
-
+language: fr
+timezone: Europe/Paris
 paths:
-  data: data
   output: output
+  state_db: data/state.sqlite3
   logs: logs
-  prompts: prompts
-  assets: assets
-  tests: tests
+news:
+  max_age_hours: 48
+  max_articles: 8
+  min_article_chars: 200
+sources:
+  - name: OpenAI
+    url: https://openai.com/news/rss.xml
+  - name: Google AI
+    url: https://blog.google/innovation-and-ai/technology/ai/rss/
+  - name: Google DeepMind
+    url: https://deepmind.google/blog/rss.xml
+  - name: Hugging Face
+    url: https://huggingface.co/blog/feed.xml
+llm:
+  provider: gemini_browser
+  model: gemini-3.1-flash-lite
+  cli_command: gemini
+  cli_model: auto
+  max_requests_per_run: 4
+  max_output_tokens: 3000
+browser:
+  channel: msedge
+  profile_dir: data/google-browser
+  headless: false
+  timeout_seconds: 180
+speech:
+  provider: auto
+  voice: fr-fr
+  rate: 155
+  google_voice: fr-FR-Standard-A
+video:
+  duration_seconds: 60
+  fps: 30
+  formats:
+    vertical: {width: 1080, height: 1920}
+    square: {width: 1080, height: 1080}
+    landscape: {width: 1920, height: 1080}
+publishing:
+  platforms: []
+  youtube:
+    privacy: private
+  instagram:
+    api_version: v25.0
