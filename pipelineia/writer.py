@@ -127,6 +127,7 @@ class _Generator:
         self.config = config
         self.settings = config.get("llm", {})
         self.requests = 0
+        self.pool = None
         self.limit = max(2, min(6, int(self.settings.get("max_requests_per_run", 4))))
 
     def generate(self, prompt: str) -> dict:
@@ -135,6 +136,15 @@ class _Generator:
             raise WriterError("Budget de requêtes atteint pour cet épisode")
         self.requests += 1
         provider = self.settings.get("provider", "gemini_cli")
+        if provider == "api_pool":
+            from .llm_pool import APIPool, PoolError
+
+            try:
+                if self.pool is None:
+                    self.pool = APIPool(self.config)
+                return self.pool.generate(prompt)
+            except PoolError as exc:
+                raise WriterError(str(exc)) from None
         if provider == "gemini_browser":
             from .browser import browser_generate
 
@@ -147,7 +157,7 @@ class _Generator:
         if provider == "gemini_cli":
             return self._cli(prompt, model)
         if provider != "gemini":
-            raise ValueError("llm.provider doit être gemini_browser, gemini_cli ou gemini")
+            raise ValueError("llm.provider doit être api_pool, gemini_browser, gemini_cli ou gemini")
         return self._api(prompt, model)
 
     def _api(self, prompt: str, model: str) -> dict:
@@ -280,6 +290,8 @@ def write_script(articles: list[dict], config: dict) -> dict:
             _validate_verification(verification, script)
             script["verification"] = verification
             script["llm_requests"] = generator.requests
+            if generator.pool is not None:
+                script["llm_http_attempts"] = generator.pool.requests
             return script
         except (ValueError, json.JSONDecodeError) as exc:
             last_error = str(exc)

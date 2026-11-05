@@ -18,8 +18,8 @@ def load_config(path: Path | str = "config.yaml") -> dict:
         value = Path(config.setdefault("paths", {}).get(key, default))
         config["paths"][key] = str(value if value.is_absolute() else path.parent / value)
     config["project_root"] = str(path.parent)
-    if config.get("llm", {}).get("provider", "gemini_browser") not in {"gemini_browser", "gemini_cli", "gemini"}:
-        raise ValueError("llm.provider doit être gemini_browser, gemini_cli ou gemini.")
+    if config.get("llm", {}).get("provider", "api_pool") not in {"api_pool", "gemini_browser", "gemini_cli", "gemini"}:
+        raise ValueError("llm.provider doit être api_pool, gemini_browser, gemini_cli ou gemini.")
     if config.get("video", {}).get("duration_seconds", 60) != 60:
         raise ValueError("Ce pipeline produit des vidéos de 60 secondes.")
     formats = config.get("video", {}).get("formats", {})

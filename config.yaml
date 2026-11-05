@@ -18,15 +18,38 @@ sources:
   - name: Hugging Face
     url: https://huggingface.co/blog/feed.xml
 llm:
-  provider: gemini_browser
+  provider: api_pool
   model: gemini-3.1-flash-lite
   cli_command: gemini
   cli_model: auto
   max_requests_per_run: 4
+  max_http_attempts_per_run: 8
+  daily_request_limit: 12
   max_output_tokens: 3000
+  api_pool:
+    - id: google_1
+      provider: gemini
+      api_key_env: GEMINI_API_KEY_1
+      quota_group: a-renseigner-projet-1
+      free_tier_confirmed: false
+    - id: google_2
+      provider: gemini
+      api_key_env: GEMINI_API_KEY_2
+      quota_group: a-renseigner-projet-2
+      free_tier_confirmed: false
+    - id: google_3
+      provider: gemini
+      api_key_env: GEMINI_API_KEY_3
+      quota_group: a-renseigner-projet-3
+      free_tier_confirmed: false
+    - id: google_4
+      provider: gemini
+      api_key_env: GEMINI_API_KEY_4
+      quota_group: a-renseigner-projet-4
+      free_tier_confirmed: false
 browser:
-  channel: msedge
-  profile_dir: data/google-browser
+  channel: chrome
+  profile_dir: data/google-chrome-browser
   headless: false
   timeout_seconds: 180
 speech:

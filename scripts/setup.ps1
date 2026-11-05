@@ -7,8 +7,8 @@ Prepare Python et, sur demande, le client officiel Gemini CLI sur Windows.
 [CmdletBinding()]
 param(
     [string]$PythonExe = 'python',
-    [ValidateSet('gemini_browser', 'gemini_cli')]
-    [string]$Provider = 'gemini_browser',
+    [ValidateSet('api_pool', 'gemini_browser', 'gemini_cli')]
+    [string]$Provider = 'api_pool',
     [switch]$InstallGemini,
     [switch]$Login
 )
@@ -18,6 +18,9 @@ $ErrorActionPreference = 'Stop'
 $repositoryPath = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 $requirementsPath = Join-Path $repositoryPath 'requirements.txt'
 $venvPython = Join-Path $repositoryPath '.venv\Scripts\python.exe'
+if ($Login -and $Provider -eq 'api_pool') {
+    throw 'Le mode API utilise des cles locales. Voir docs\API_KEYS.md ; ne pas utiliser -Login pour ce mode.'
+}
 if ($InstallGemini -and -not $PSBoundParameters.ContainsKey('Provider')) {
     $Provider = 'gemini_cli'
 }

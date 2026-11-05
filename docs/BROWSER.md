@@ -1,4 +1,6 @@
-# Utiliser le quota Gemini dans le navigateur
+# Mode navigateur expérimental
+
+Les essais de connexion Google dans Edge et Chrome automatisés ont été refusés. Ce mode n'est plus le défaut et ne constitue pas une voie de production validée. Utiliser [l'API gratuite](API_KEYS.md) pour le parcours courant ; les instructions ci-dessous restent une référence pour un environnement où la connexion serait autorisée.
 
 Le mode choisi par défaut utilise **Gemini Web et le compte Google connecté**, pour rédiger et vérifier les scripts avec l'abonnement existant. Il ne facture pas une API Gemini en arrière-plan et ne génère pas de clips Veo. Le montage et la voix restent locaux. Les limites du forfait et la disponibilité de Gemini continuent de s'appliquer.
 

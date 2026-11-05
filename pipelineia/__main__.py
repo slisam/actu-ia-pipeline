@@ -30,8 +30,14 @@ def doctor(config: dict) -> int:
         checks["ffmpeg"] = result.returncode == 0
     except Exception:
         checks["ffmpeg"] = False
-    provider = config.get("llm", {}).get("provider", "gemini_browser")
-    if provider == "gemini_browser":
+    provider = config.get("llm", {}).get("provider", "api_pool")
+    if provider == "api_pool":
+        from .llm_pool import readiness
+        pool = readiness(config)
+        checks["cles_gemini"] = pool
+        checks["api_gratuite_configuree"] = any(item.get("ready", False) for item in pool.values())
+        checks["api_note"] = "Présence locale uniquement : niveau gratuit et droits du projet à vérifier dans AI Studio. Un quota atteint suspend tous les appels Gemini."
+    elif provider == "gemini_browser":
         profile = Path(config.get("browser", {}).get("profile_dir", "data/google-browser"))
         if not profile.is_absolute():
             profile = Path(config["project_root"]) / profile
