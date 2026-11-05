@@ -44,11 +44,29 @@ def test_collect_keeps_fresh_news_deduplicates_and_skips_used(monkeypatch):
     assert requested == ["https://news.example/rss.xml", "https://news.example/new"]
 
 
-def test_failing_sources_return_empty_never_invent_news(monkeypatch):
+def test_all_unreachable_sources_are_an_error_not_a_quiet_empty_day(monkeypatch):
     def fail(*_):
         raise requests.Timeout("échec")
     monkeypatch.setattr(news, "_download", fail)
+    with pytest.raises(news.CollectionUnavailable):
+        news.collect_news({"sources": [{"name": "Source", "url": "https://news.example/rss"}]})
+
+
+def test_reachable_empty_feed_is_not_a_failure(monkeypatch):
+    monkeypatch.setattr(news, "_download", lambda url, *_: (b"<rss><channel></channel></rss>", url))
     assert news.collect_news({"sources": [{"name": "Source", "url": "https://news.example/rss"}]}) == []
+
+
+def test_fresh_articles_all_unreachable_are_reported_as_collection_failure(monkeypatch):
+    feed = ("<rss><channel>" + _entry("https://news.example/article", datetime.now(timezone.utc)) + "</channel></rss>").encode()
+    def download(url, *_):
+        if url.endswith("rss"):
+            return feed, url
+        raise requests.Timeout("private-network-details")
+    monkeypatch.setattr(news, "_download", download)
+    monkeypatch.setattr(news, "_public_url", lambda *_: None)
+    with pytest.raises(news.CollectionUnavailable):
+        news.collect_news({"sources": [{"name": "Source", "url": "https://news.example/rss"}]})
 
 
 @pytest.mark.parametrize("url", ["file:///etc/passwd", "http://localhost/a", "https://attacker.example/a",

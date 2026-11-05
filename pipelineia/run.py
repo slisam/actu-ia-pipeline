@@ -19,6 +19,7 @@ from .render import render_episode
 from .speech import synthesize
 from .state import State
 from .writer import write_script
+from .failures import report_failure, report_publication, report_recovery
 
 LOGGER = logging.getLogger(__name__)
 
@@ -65,6 +66,7 @@ def run_episode(config: dict, publish: bool = False, demo: bool = False,
         directory.mkdir(parents=True, exist_ok=True)
         state = State(state_path)
         row = state.get(episode_id) if not demo else None
+        stage = "startup"
         try:
             if demo:
                 script = demo_script()
@@ -72,11 +74,13 @@ def run_episode(config: dict, publish: bool = False, demo: bool = False,
                 script = json.loads(row["script_json"])
                 LOGGER.info("Reprise du script validé : %s", episode_id)
             else:
+                stage = "collect"
                 articles = collect_news(config, used_urls=state.used_urls(excluding=episode_id))
                 write_json(directory / "articles.json", articles)
                 if not articles:
                     LOGGER.warning("Aucune actualité récente exploitable ; aucune vidéo fabriquée.")
                     return {"status": "no_news", "episode_id": episode_id}
+                stage = "write"
                 script = write_script(articles, config)
                 state.save(episode_id, "script_validated", script)
             if publish:
@@ -114,7 +118,9 @@ def run_episode(config: dict, publish: bool = False, demo: bool = False,
             if complete_files:
                 manifest = previous
             else:
+                stage = "voice"
                 audio = synthesize(narration, directory / "voice.wav", config)
+                stage = "render"
                 videos = render_episode(script, audio, directory, config)
                 manifest = {"episode_id": episode_id, "title": script["title"], "demo": demo,
                             "description": script["title"] + "\n\nSources :\n" + "\n".join(source["url"] for source in script["sources"]) + "\n\nVoix de synthèse. #IA #ActualiteIA",
@@ -125,20 +131,27 @@ def run_episode(config: dict, publish: bool = False, demo: bool = False,
             if not demo:
                 state.save(episode_id, "rendered", script)
             if publish:
+                stage = "publish"
                 results = publish_episode(directory, config)
                 write_json(directory / "publication.json", results)
                 manifest["publication"] = results
                 write_json(manifest_path, manifest)
+                report_publication(config, episode_id, results)
                 if any(item.get("status") not in {"succeeded", "export_only"} for item in results.values()):
                     state.save(episode_id, "publication_incomplete", script)
                     return {"status": "publication_incomplete", "episode_id": episode_id,
                             "directory": str(directory), "manifest": manifest}
             if not demo:
                 state.save(episode_id, "complete", script)
+                report_recovery(config, episode_id)
             LOGGER.info("Épisode disponible : %s", directory)
             return {"status": "complete", "episode_id": episode_id, "directory": str(directory), "manifest": manifest}
         except Exception as exc:
             # Les exceptions tierces peuvent contenir des URLs signées ou jetons.
             if not demo:
-                state.save(episode_id, "failed", error=type(exc).__name__)
+                try:
+                    state.save(episode_id, "failed", error=type(exc).__name__)
+                except Exception:
+                    LOGGER.warning("État d'échec non enregistré ; consulter les journaux locaux.")
+                report_failure(config, episode_id, stage, exc)
             raise

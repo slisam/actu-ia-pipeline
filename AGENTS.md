@@ -15,5 +15,6 @@ Objectif : actualités IA sourcées en français, hook immédiat, vidéos de 60 
 - Publication uniquement sur les plateformes configurées par l'utilisateur ; respecter leurs API et exigences de consentement.
 - État persistant et verrou : aucune republication automatique après une réponse ambiguë.
 - Logs sans secrets ; backoff pour les lectures réseau ; pas de répétition aveugle des mutations.
+- Alertes Telegram : messages fixes sans secrets ni scripts, journal local, limitation des doublons et reprises bornées. Un échec de notification ne doit pas masquer l'erreur de production. Aucun envoi réel pendant les tests.
 - Tests pytest avec API simulées et rendu réel en basse résolution.
 - Documenter les connexions initiales et les limites d'une exécution autonome.

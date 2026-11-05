@@ -82,3 +82,12 @@ publishing:
     privacy: private
   instagram:
     api_version: v25.0
+alerts:
+  enabled: true
+  provider: telegram
+  cooldown_seconds: 3600
+  pending_delay_seconds: 900
+  max_attempts: 3
+  retry_base_seconds: 60
+  timeout_seconds: 10
+  batch_size: 10

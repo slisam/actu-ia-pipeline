@@ -50,3 +50,5 @@ Les sous-titres utilisent les repères ElevenLabs vérifiés lorsqu'ils sont dis
 Si aucune actualité récente exploitable n'est disponible, aucune vidéo n'est générée. Les fichiers sont sous `output/AAAA-MM-JJ-actu-ia/` ; les logs tournants sous `logs/`. `publication.json` décrit les résultats par destination. Les codes de sortie sont 0 en cas de succès ou absence de nouvelle actualité, 2 pour une publication incomplète, 1 pour une autre erreur.
 
 GitHub Actions exécute seulement les tests et une démonstration silencieuse. La production utilise le planificateur local/serveur ; aucun navigateur Google connecté n'est exporté vers GitHub.
+
+Les échecs peuvent être transmis dans une conversation privée Telegram après connexion du bot. Planifier `alerts-flush` toutes les cinq minutes pour les notifications différées et les reprises, indépendamment de la production vidéo. Les incidents résolus sont annulés ; voir [ALERTS.md](ALERTS.md).
