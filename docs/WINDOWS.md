@@ -46,7 +46,7 @@ Une fois les clés API configurées, un premier essai réussi et les destination
 .\scripts\install-task.ps1 -Time '19:00'
 ```
 
-Cela crée la tâche Windows **PipelineIA-Actualites-Quotidien**, sous votre compte courant, qui lance `run --publish` depuis le dossier du projet chaque jour. L'heure est configurable au format `HH:mm`. Le script vérifie que le fuseau Windows correspond à Paris ; l'heure suit alors les changements saisonniers habituels.
+Cela crée la tâche Windows **PipelineIA-Actualites-Quotidien**, sous votre compte courant, qui lance `run --publish` chaque jour, ainsi que **PipelineIA-Alertes** pour relancer les notifications en attente toutes les cinq minutes. Connecter Telegram selon [ALERTS.md](ALERTS.md). L'heure de production est configurable et suit le fuseau Paris vérifié par le script.
 
 Le PC doit être allumé, connecté à Internet et votre session Windows doit rester ouverte. L'écran peut être verrouillé. Si une exécution est manquée, Windows essaie de la lancer quand la session est à nouveau disponible ; il ne lance pas deux productions simultanément. Une clé révoquée ou un quota épuisé peut interrompre un épisode. Cette solution locale ne garantit pas une exécution lorsque le PC est arrêté.
 

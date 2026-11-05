@@ -151,3 +151,23 @@ def test_unexpected_setup_error_logs_no_exception_body(config, monkeypatch, capl
     with caplog.at_level(logging.ERROR):
         assert cli.main(["doctor"]) == 1
     assert "secret-body-and-private-url" not in caplog.text
+
+
+def test_alert_test_is_explicit_and_does_not_generate_video(config, monkeypatch):
+    monkeypatch.setattr(cli, "load_config", lambda path: config)
+    send = Mock(return_value={"status": "sent"})
+    monkeypatch.setattr(cli, "notify_failure", send)
+    generation = Mock(side_effect=AssertionError("Ne pas produire de vidéo"))
+    monkeypatch.setattr(cli, "run_episode", generation)
+    assert cli.main(["alerts-test"]) == 0
+    send.assert_called_once_with(config, "test", "startup", code="test")
+    generation.assert_not_called()
+
+
+def test_alert_flush_reports_unconfirmed_delivery(config, monkeypatch):
+    monkeypatch.setattr(cli, "load_config", lambda path: config)
+    monkeypatch.setattr(cli, "alert_readiness", lambda config: {"enabled": True, "ready": True})
+    flush = Mock(return_value={"sent": 0, "pending": 0, "failed": 0, "uncertain": 1})
+    monkeypatch.setattr(cli, "flush_alerts", flush)
+    assert cli.main(["alerts-flush"]) == 2
+    flush.assert_called_once_with(config)

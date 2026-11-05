@@ -49,6 +49,8 @@ Après connexion des destinations sociales et configuration de `publishing.platf
 
 La tâche produit puis publie à 19h, heure de Paris. Le PC doit être allumé, connecté et la session Windows ouverte. Le même script validé est repris après un incident ; une vidéo n'est pas envoyée deux fois sans vérifier son état. Les actualités périmées ne sont pas publiées lors des reprises.
 
+Les échecs sont journalisés et peuvent être envoyés dans une conversation privée Telegram. Renseigner `TELEGRAM_BOT_TOKEN` et `TELEGRAM_CHAT_ID` dans `.env`, puis utiliser `alerts-test` pour vérifier la réception. Une tâche séparée relance les notifications en attente toutes les cinq minutes ; le même installateur Windows la prépare. [Connexion et fonctionnement des alertes](docs/ALERTS.md).
+
 Pour une machine disponible en permanence, utiliser Linux avec son planificateur ou le conteneur fourni. [Guide Windows](docs/WINDOWS.md) · [Exploitation et Docker](docs/OPERATIONS.md).
 
 ## Plateformes

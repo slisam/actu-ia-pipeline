@@ -29,6 +29,7 @@ if ($existingTask -and $existingTask.Description -ne $description) {
     throw "La tache $taskName existe pour un autre emplacement. Inspectez-la dans le Planificateur avant de continuer."
 }
 if ($Uninstall) {
+    & (Join-Path $PSScriptRoot 'install-alert-task.ps1') -Uninstall
     if ($existingTask) {
         Unregister-ScheduledTask -TaskName $taskName -TaskPath $taskPath -Confirm:$false
         Write-Host 'La tache quotidienne PipelineIA a ete retiree. Les fichiers et connexions sont conserves.'
@@ -54,6 +55,7 @@ $principal = New-ScheduledTaskPrincipal -UserId $currentUser -LogonType Interact
 $settings = New-ScheduledTaskSettingsSet -StartWhenAvailable -MultipleInstances IgnoreNew -ExecutionTimeLimit (New-TimeSpan -Minutes 45)
 $task = New-ScheduledTask -Action $action -Trigger $trigger -Principal $principal -Settings $settings -Description $description
 Register-ScheduledTask -TaskName $taskName -TaskPath $taskPath -InputObject $task -Force | Out-Null
+& (Join-Path $PSScriptRoot 'install-alert-task.ps1')
 Write-Host "Production quotidienne activee a $Time, heure de Paris, sous $currentUser."
 Write-Host 'Le PC doit etre allume, connecte a Internet, et votre session Windows ouverte.'
 Write-Host 'La publication depend des plateformes activees dans config.yaml et de leurs connexions.'

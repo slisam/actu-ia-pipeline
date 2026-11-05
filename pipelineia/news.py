@@ -19,6 +19,10 @@ LOGGER = logging.getLogger(__name__)
 TRACKERS = {"fbclid", "gclid", "mc_cid", "mc_eid", "ref", "source"}
 
 
+class CollectionUnavailable(RuntimeError):
+    """Aucune source n'a pu être consultée, contrairement à une absence d'actualité."""
+
+
 def canonical_url(url: str) -> str:
     """Normalise une URL et retire seulement les paramètres de suivi connus."""
     parts = urlsplit(url.strip())
@@ -111,10 +115,14 @@ def collect_news(config: dict, used_urls: set[str] | None = None) -> list[dict]:
     max_bytes = max(10000, min(5_000_000, int(settings.get("max_bytes", 3_000_000))))
     min_chars = max(100, int(settings.get("min_article_chars", 200)))
     candidates: dict[str, dict] = {}
+    feeds_available = 0
     for source in sources:
         try:
             data, _ = _download(source["url"], allowed_hosts, max_bytes, timeout)
             feed = feedparser.parse(data)
+            if feed.bozo and not feed.entries:
+                raise ValueError("Flux RSS illisible")
+            feeds_available += 1
             for entry in feed.entries[:100]:
                 stamp = entry.get("published_parsed") or entry.get("updated_parsed")
                 if not stamp or not entry.get("link") or not entry.get("title"):
@@ -132,9 +140,13 @@ def collect_news(config: dict, used_urls: set[str] | None = None) -> list[dict]:
                                             "source": source["name"]})
         except (requests.RequestException, OSError, ValueError, KeyError) as exc:
             LOGGER.warning("Source indisponible %s (%s)", source.get("name", "?"), type(exc).__name__)
+    if sources and not feeds_available:
+        raise CollectionUnavailable("Toutes les sources d'actualité sont indisponibles.")
     results: list[dict] = []
+    article_attempts = article_failures = 0
     ordered = sorted(candidates.values(), key=lambda item: item["published_at"], reverse=True)
     for article in ordered[:max_articles * 3]:
+        article_attempts += 1
         try:
             content, final_url = _download(article["url"], allowed_hosts, max_bytes, timeout)
             url = canonical_url(final_url)
@@ -149,5 +161,8 @@ def collect_news(config: dict, used_urls: set[str] | None = None) -> list[dict]:
             if len(results) == max_articles:
                 break
         except (requests.RequestException, OSError, ValueError) as exc:
+            article_failures += 1
             LOGGER.warning("Article ignoré %s (%s)", article["title"][:60], type(exc).__name__)
+    if article_attempts and article_failures == article_attempts:
+        raise CollectionUnavailable("Les articles récents n'ont pas pu être récupérés.")
     return results

@@ -18,6 +18,9 @@ from .state import State
 from .writer import WriterError
 from .browser import BrowserError
 from .elevenlabs import ElevenLabsError
+from .alerts import alert_readiness, flush_alerts, notify_failure
+from .failures import report_failure
+from .telegram_setup import private_chat_ids, TelegramSetupError
 
 LOGGER = logging.getLogger("pipelineia")
 
@@ -72,6 +75,11 @@ def doctor(config: dict) -> int:
     else:
         checks["voix_locale_installee"] = False
     checks["publication"] = publishing_readiness(config)
+    checks["alertes"] = alert_readiness(config)
+    if checks["alertes"].get("status") == "invalid_configuration":
+        checks["alertes_configurees"] = False
+    elif checks["alertes"].get("enabled"):
+        checks["alertes_configurees"] = checks["alertes"].get("ready", False)
     LOGGER.info("Diagnostic (présence locale, pas validation des droits distants) :\n%s", json.dumps(checks, ensure_ascii=False, indent=2))
     publication_ok = all(item.get("ready", False) or item.get("status") == "export_only"
                          for item in checks["publication"].values())
@@ -84,6 +92,9 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--config", default="config.yaml")
     commands = parser.add_subparsers(dest="command", required=True)
     commands.add_parser("doctor", help="Diagnostic sans génération ni dépense")
+    commands.add_parser("alerts-test", help="Envoyer une alerte de test vers la destination configurée")
+    commands.add_parser("alerts-chat", help="Trouver l'identifiant de conversation privée après avoir écrit au bot")
+    commands.add_parser("alerts-flush", help="Retenter les alertes en attente dont le délai est écoulé")
     demo = commands.add_parser("demo", help="Exemple hors ligne, sans actualité inventée")
     demo.add_argument("--quick", action="store_true", help="Résolution réduite pour vérifier rapidement")
     demo.add_argument("--silent", action="store_true", help="Sans voix, pour CI seulement")
@@ -92,6 +103,7 @@ def main(argv: list[str] | None = None) -> int:
     run.add_argument("--episode-id", help="Reprendre un épisode précis AAAA-MM-JJ-actu-ia")
     args = parser.parse_args(argv)
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s : %(message)s")
+    config = None
     try:
         config = load_config(args.config)
         log_dir = Path(config["paths"]["logs"])
@@ -102,6 +114,19 @@ def main(argv: list[str] | None = None) -> int:
         logging.getLogger().addHandler(handler)
         if args.command == "doctor":
             return doctor(config)
+        if args.command == "alerts-test":
+            result = notify_failure(config, "test", "startup", code="test")
+            LOGGER.info("Alerte de test : %s", result.get("status", "indisponible"))
+            return 0 if result.get("status") in {"sent", "suppressed"} else 2
+        if args.command == "alerts-chat":
+            identifiers = private_chat_ids()
+            LOGGER.info("Conversations privées disponibles : %s", ", ".join(identifiers) if identifiers else "aucune ; envoyer /start à votre bot dans Telegram puis recommencer")
+            return 0 if identifiers else 2
+        if args.command == "alerts-flush":
+            result = flush_alerts(config)
+            LOGGER.info("Journal d'alertes : %s", json.dumps(result, ensure_ascii=False))
+            ready = alert_readiness(config).get("ready", False)
+            return 0 if ready and not any(result.get(key, 0) for key in ("failed", "uncertain", "pending")) else 2
         if args.command == "demo":
             result = run_episode(config, demo=True, quick=args.quick, silent=args.silent)
             LOGGER.info("Démo : %s", result["directory"])
@@ -120,16 +145,24 @@ def main(argv: list[str] | None = None) -> int:
                 LOGGER.info("Résultat : %s (%s)", result["status"], episode_id)
                 failed |= result["status"] == "publication_incomplete"
             except Exception as exc:
+                if not getattr(exc, "_pipeline_alert_handled", False):
+                    report_failure(config, episode_id, "startup", exc)
                 LOGGER.error("Épisode %s interrompu (%s). Le script validé est conservé.", episode_id, type(exc).__name__)
                 if isinstance(exc, (WriterError, BrowserError, ElevenLabsError, ValueError)):
                     LOGGER.error("%s", str(exc))
                 failed = True
+        try:
+            flush_alerts(config)
+        except Exception:
+            LOGGER.warning("Relance des alertes indisponible ; résultat de production conservé.")
         return 2 if failed else 0
     except Exception as exc:
         # Pas de traceback/corps distant : les exceptions réseau peuvent contenir des jetons.
-        safe_types = (ValueError, FileNotFoundError, WriterError, BrowserError, ElevenLabsError)
+        safe_types = (ValueError, FileNotFoundError, WriterError, BrowserError, ElevenLabsError, TelegramSetupError)
         message = str(exc) if isinstance(exc, safe_types) else "Consulter le diagnostic local ; aucun basculement vers une API payante."
         LOGGER.error("%s : %s", type(exc).__name__, message)
+        if config is not None and args.command == "run":
+            report_failure(config, "pipeline", "startup", exc)
         return 1
 
 
