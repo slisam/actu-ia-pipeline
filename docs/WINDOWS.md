@@ -1,24 +1,24 @@
 # Démarrage sur Windows
 
-Cette installation utilise Gemini dans un profil Microsoft Edge séparé pour travailler avec votre compte Google AI Pro. Aucun abonnement supplémentaire n'est nécessaire pour le montage et la voix locale. Le compte Google doit être connecté une première fois ; les comptes de publication demandent également une autorisation initiale. Le pipeline ne connecte pas automatiquement vos trois comptes et ne change pas de compte pour contourner un quota.
+Cette installation utilise Gemini API au niveau gratuit, avec jusqu'à quatre clés de secours. Le montage et la voix fonctionnent localement. Les clés API et les comptes de publication demandent une configuration initiale. Un quota Gemini atteint met l'application en pause ; aucune rotation de comptes ne prolonge ce quota.
 
 ## 1. Préparer les outils
 
-Installez [Python 3.11 ou plus récent](https://www.python.org/downloads/windows/). Microsoft Edge doit être disponible sur votre PC. Pendant l'installation de Python, activez son ajout au `PATH`. Ouvrez ensuite PowerShell dans le dossier du projet.
+Installez [Python 3.11 ou plus récent](https://www.python.org/downloads/windows/). Pendant l'installation de Python, activez son ajout au `PATH`. Ouvrez ensuite PowerShell dans le dossier du projet.
 
 ```powershell
-.\scripts\setup.ps1 -Login
+.\scripts\setup.ps1
 ```
 
-Le script crée `.venv` et installe les bibliothèques Python, dont Playwright pour piloter le navigateur. L'option `-Login` ouvre Gemini dans un profil Edge dédié : connectez le compte de votre abonnement Google AI Pro et suivez les instructions du terminal. Votre profil Edge habituel reste indépendant. La session du profil dédié reste sur le PC et est exclue de Git.
+Le script crée `.venv` et installe les bibliothèques Python. Ajouter ensuite au moins une clé dans `.env` et confirmer le projet au niveau Free dans `config.yaml`, selon [API_KEYS.md](API_KEYS.md). Une connexion dans une fenêtre automatisée n'est pas nécessaire.
 
 Si Windows bloque les scripts locaux, lancez cette commande pour cette seule exécution :
 
 ```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\setup.ps1 -Login
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\setup.ps1
 ```
 
-Le navigateur utilise la session Gemini et les limites disponibles pour le compte connecté. Il ne convertit pas l'abonnement en crédits d'API. Une reconnexion, un contrôle Google ou un changement de l'interface peuvent nécessiter une intervention. Aucun passage à une API payante n'est déclenché automatiquement.
+Le niveau gratuit de l'API est indépendant de votre abonnement AI Pro. Le diagnostic ne peut pas vérifier la facturation distante : utiliser un projet au niveau Free sans facturation payante activée.
 
 ## 2. Vérifier puis produire
 
@@ -28,7 +28,7 @@ Le navigateur utilise la session Gemini et les limites disponibles pour le compt
 .\.venv\Scripts\python.exe -m pipelineia run
 ```
 
-Le diagnostic signale les éléments manquants. La démonstration utilise une piste silencieuse marquée comme telle ; la production normale utilise une voix française Windows installée, par exemple Microsoft Hortense. Si aucune voix française n'est disponible, ajoutez le français et ses fonctions vocales dans les paramètres **Heure et langue** de Windows, puis relancez le diagnostic.
+Le diagnostic signale les éléments manquants. La démonstration et la production utilisent une voix française Windows installée, par exemple Microsoft Hortense. L'option `demo --silent` crée une démonstration silencieuse. Si aucune voix française n'est disponible, ajoutez le français et ses fonctions vocales dans les paramètres **Heure et langue** de Windows, puis relancez le diagnostic.
 
 La commande `run` produit les fichiers sans publier. Pour publier aussi sur les plateformes activées et connectées dans `config.yaml` :
 
@@ -36,11 +36,11 @@ La commande `run` produit les fichiers sans publier. Pour publier aussi sur les 
 .\.venv\Scripts\python.exe -m pipelineia run --publish
 ```
 
-Consultez les instructions de publication du projet pour connecter vos comptes. Les fichiers de configuration et journaux restent dans le dossier du projet. Le profil Gemini est conservé localement dans le dossier indiqué par `browser.profile_dir` de `config.yaml`.
+Consultez les instructions de publication du projet pour connecter vos comptes. Les clés restent dans `.env`, ignoré par Git. Les compteurs et délais de reprise sont enregistrés dans la base locale ignorée par Git.
 
 ## 3. Activer l'exécution quotidienne
 
-Une fois la connexion Google et un premier essai réussis :
+Une fois les clés API configurées, un premier essai réussi et les destinations de publication connectées :
 
 ```powershell
 .\scripts\install-task.ps1 -Time '19:00'
@@ -48,7 +48,7 @@ Une fois la connexion Google et un premier essai réussis :
 
 Cela crée la tâche Windows **PipelineIA-Actualites-Quotidien**, sous votre compte courant, qui lance `run --publish` depuis le dossier du projet chaque jour. L'heure est configurable au format `HH:mm`. Le script vérifie que le fuseau Windows correspond à Paris ; l'heure suit alors les changements saisonniers habituels.
 
-Le PC doit être allumé, connecté à Internet et votre session Windows doit rester ouverte. L'écran peut être verrouillé. Si une exécution est manquée, Windows essaie de la lancer quand la session est à nouveau disponible ; il ne lance pas deux productions simultanément. Une reconnexion Google peut parfois être nécessaire. Cette solution locale ne garantit pas une exécution lorsque le PC est arrêté.
+Le PC doit être allumé, connecté à Internet et votre session Windows doit rester ouverte. L'écran peut être verrouillé. Si une exécution est manquée, Windows essaie de la lancer quand la session est à nouveau disponible ; il ne lance pas deux productions simultanément. Une clé révoquée ou un quota épuisé peut interrompre un épisode. Cette solution locale ne garantit pas une exécution lorsque le PC est arrêté.
 
 Pour modifier l'heure, relancez le script avec la nouvelle heure. Pour retirer uniquement cette tâche :
 
@@ -60,7 +60,7 @@ Le retrait conserve les vidéos, la configuration et les connexions. Déplacer l
 
 ## Client Gemini CLI facultatif
 
-Le client officiel reste disponible comme fournisseur alternatif, mais l'essai réel du 5 novembre 2026 a été refusé par Google avec `UNSUPPORTED_CLIENT` pour le compte connecté. Son fonctionnement avec votre abonnement n'est donc pas garanti. Le fournisseur navigateur est celui configuré par défaut.
+Le client officiel reste disponible comme fournisseur alternatif, mais l'essai réel du 5 novembre 2026 a été refusé par Google avec `UNSUPPORTED_CLIENT` pour le compte connecté. La connexion du navigateur automatisé a aussi été refusée. Ces voies restent expérimentales ; l'API est le fournisseur par défaut.
 
 Pour préparer volontairement cette alternative, installez [Node.js LTS 22 ou plus récent](https://nodejs.org/) puis lancez :
 

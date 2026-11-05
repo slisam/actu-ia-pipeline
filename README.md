@@ -4,30 +4,32 @@ Des actualités IA en français transformées en vidéos de **60 secondes** : ac
 
 ## Le choix économique
 
-**Par défaut, aucune API de génération payante** :
+**Par défaut, Gemini API au niveau gratuit, avec une voix et un montage locaux** :
 
 1. Collecte des annonces récentes dans les flux officiels OpenAI, Google, DeepMind et Hugging Face.
-2. Rédaction et vérification dans **Gemini via un navigateur dédié**, connecté au compte Google de votre abonnement AI Pro.
+2. Rédaction et vérification avec **Gemini API**, dans un projet au niveau gratuit confirmé.
 3. Voix gratuite sur l'ordinateur : **Windows SAPI en français** ou eSpeak sur Linux.
 4. Cartes graphiques originales, montage FFmpeg et sous-titres.
 5. Exports **1080×1920**, **1080×1080** et **1920×1080**, puis publication sur les comptes configurés.
 
-Le coût additionnel des appels de génération est nul tant que les quotas de l'abonnement connecté suffisent. L'électricité, l'ordinateur/serveur, l'hébergement des vidéos et les abonnements existants restent à compter. Aucun passage automatique à une API payante. Un seul compte suffit pour démarrer ; il n'y a pas de rotation de comptes destinée à contourner les quotas.
+Une seule clé suffit pour démarrer ; quatre emplacements sont prévus pour le secours d'identifiants. Une clé invalide ou révoquée peut être remplacée par la suivante. **Un quota atteint suspend tous les appels Gemini de cette application** jusqu'au délai de reprise, sans rotation de comptes pour prolonger le quota. Les appels sont bornés par épisode et par jour, avec des compteurs persistants.
 
-**Le navigateur rédige du texte dans Gemini ; il ne génère pas de clips Veo dans cette version.** Le montage produit les vidéos à partir de cartes et de voix. L'interface Flow n'est pas automatisée. Le navigateur conserve les limites de l'abonnement : une reconnexion, un CAPTCHA ou un changement d'interface peut interrompre le pipeline. Gemini CLI et l'API restent des options explicites. Les coûts et les options Google sont détaillés dans [COSTS.md](docs/COSTS.md) et le [guide navigateur](docs/BROWSER.md).
+Les clés doivent appartenir à des projets au niveau gratuit, sans facturation payante activée. Le code n'active aucune facturation ; il ne peut cependant pas vérifier le statut distant du projet ni empêcher une facturation modifiée hors du pipeline. La voix et les cartes originales ne consomment aucune API. L'électricité, le calcul et l'hébergement restent à compter. [Connexion des clés](docs/API_KEYS.md) · [Coûts](docs/COSTS.md).
+
+Le montage produit les vidéos à partir de cartes et de voix ; il ne génère pas de clips Veo et n'automatise pas Flow. Les anciens modes navigateur et Gemini CLI restent expérimentaux : les connexions réelles ont été refusées par Google lors des essais.
 
 ## Démarrer sous Windows
 
-Python 3.11+ et Microsoft Edge sont nécessaires. Dans PowerShell, depuis le dossier du projet :
+Python 3.11+ est nécessaire. Dans PowerShell, depuis le dossier du projet :
 
 ```powershell
-.\scripts\setup.ps1 -Login
+.\scripts\setup.ps1
 .\.venv\Scripts\python.exe -m pipelineia doctor
 .\.venv\Scripts\python.exe -m pipelineia demo
 .\.venv\Scripts\python.exe -m pipelineia run
 ```
 
-Pendant la première connexion, utiliser le compte lié à AI Pro dans le navigateur dédié puis suivre l'instruction affichée dans le terminal. Le diagnostic n'effectue aucun appel de génération. `demo` utilise un exemple explicitement fictif ; `run` recherche une vraie actualité. Les vidéos apparaissent dans `output/`.
+Avant `doctor` et `run`, ajouter au moins une clé dans `.env` et renseigner son projet et sa confirmation du niveau Free dans `config.yaml`, selon [API_KEYS.md](docs/API_KEYS.md). Le diagnostic n'effectue aucun appel de génération. `demo` utilise un exemple explicitement fictif ; `run` recherche une vraie actualité. Les vidéos apparaissent dans `output/`.
 
 Pour générer rapidement un exemple en basse résolution :
 
@@ -79,7 +81,7 @@ Une base SQLite locale garde les scripts et les états de publication. **Elle co
 
 ## Réglages et tests
 
-`config.yaml` choisit les sources, modèles, voix, formats et destinations. `.env.example` décrit les secrets optionnels. L'API Gemini (`llm.provider: gemini`) et Google Cloud TTS (`speech.provider: google`) sont des alternatives explicites, jamais des replis automatiques.
+`config.yaml` choisit les sources, modèles, voix, formats et destinations. `.env.example` décrit les quatre emplacements de clés Gemini et les secrets sociaux optionnels. `llm.provider: api_pool` est le défaut ; les anciens fournisseurs restent optionnels. Google Cloud TTS (`speech.provider: google`) est une alternative explicite, jamais un repli automatique.
 
 ```powershell
 .\.venv\Scripts\python.exe -m pytest -q

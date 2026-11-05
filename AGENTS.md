@@ -4,8 +4,9 @@ L'utilisateur a autorisé la refonte et l'automatisation sans validation manuell
 Objectif : actualités IA sourcées en français, hook immédiat, vidéos de 60 secondes.
 
 - Python 3.11+, modules indépendants dans pipelineia, configuration dans config.yaml.
-- Coût minimal : Gemini dans un navigateur dédié connecté au compte Google, voix locale, Pillow/FFmpeg. CLI et API restent optionnels.
-- Gemini API et voix Google Cloud restent des options explicites.
+- Fournisseur par défaut : Gemini API au niveau gratuit, voix locale et Pillow/FFmpeg. Le navigateur et CLI restent expérimentaux après refus de connexion Google lors des essais.
+- Quatre clés peuvent servir de secours d'identifiants. Un HTTP429 suspend tous les appels Gemini de cette application ; aucune rotation de comptes pour prolonger un quota épuisé.
+- Respecter les limites projet, les délais de reprise et un plafond global d'appels. La confirmation du niveau gratuit est locale et ne prouve pas le statut de facturation distant.
 - Ne jamais enregistrer de clés, cookies, jetons OAuth ou bases de publication dans Git.
 - Prompts dans prompts/*.md ; modèles et voix configurables.
 - Sources primaires récentes, citations vérifiées, refus si preuve insuffisante.
