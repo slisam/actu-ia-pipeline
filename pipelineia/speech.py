@@ -101,7 +101,7 @@ def _google(text: str, config: dict) -> bytes:
 
 
 def synthesize(text: str, output: Path, config: dict) -> Path:
-    """Crée une voix WAV locale ou Google; demo crée un silence explicitement réservé aux essais."""
+    """Crée une voix WAV locale, Google ou ElevenLabs ; demo est réservé aux essais."""
     output = Path(output)
     if not text.strip():
         raise ValueError("Le texte de narration est vide.")
@@ -120,6 +120,9 @@ def synthesize(text: str, output: Path, config: dict) -> Path:
             wav.setframerate(24000)
             wav.writeframes(b"\x00\x00" * int(duration * 24000))
         LOGGER.warning("Démonstration : piste silencieuse, aucune voix générée.")
+    elif provider == "elevenlabs":
+        from .elevenlabs import synthesize_elevenlabs
+        return synthesize_elevenlabs(text, output, config)
     elif provider == "system":
         _system(text, output, speech)
     elif provider == "espeak":
@@ -149,10 +152,9 @@ def main() -> None:
     parser.add_argument("output", type=Path)
     parser.add_argument("--config", type=Path, default=Path("config.yaml"))
     args = parser.parse_args()
-    import yaml
-
+    from .config import load_config
     synthesize(args.text.read_text(encoding="utf-8"), args.output,
-               yaml.safe_load(args.config.read_text(encoding="utf-8")))
+               load_config(args.config))
 
 
 if __name__ == "__main__":

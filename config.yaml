@@ -53,10 +53,22 @@ browser:
   headless: false
   timeout_seconds: 180
 speech:
-  provider: auto
+  provider: elevenlabs
   voice: fr-fr
   rate: 155
   google_voice: fr-FR-Standard-A
+  elevenlabs:
+    model_id: eleven_flash_v2_5
+    output_format: mp3_44100_128
+    language_code: fr
+    max_characters: 5000
+    timeout_seconds: 120
+    voice_settings:
+      stability: 0.5
+      similarity_boost: 0.75
+      style: 0
+      use_speaker_boost: true
+      speed: 1.0
 video:
   duration_seconds: 60
   fps: 30

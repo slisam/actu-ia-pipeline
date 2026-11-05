@@ -1,6 +1,6 @@
 # Démarrage sur Windows
 
-Cette installation utilise Gemini API au niveau gratuit, avec jusqu'à quatre clés. Le montage et la voix fonctionnent localement. Les clés API et les comptes de publication demandent une configuration initiale. Un quota Gemini atteint met son projet en pause puis déclenche immédiatement l'essai d'une clé d'un autre projet disponible.
+Cette installation utilise Gemini API au niveau gratuit, avec jusqu'à quatre clés, et ElevenLabs pour la voix off payante. Le montage fonctionne localement. Les clés API et les comptes de publication demandent une configuration initiale. Un quota Gemini atteint met son projet en pause puis déclenche immédiatement l'essai d'une clé d'un autre projet disponible.
 
 ## 1. Préparer les outils
 
@@ -10,7 +10,7 @@ Installez [Python 3.11 ou plus récent](https://www.python.org/downloads/windows
 .\scripts\setup.ps1
 ```
 
-Le script crée `.venv` et installe les bibliothèques Python. Ajouter ensuite au moins une clé dans `.env` et confirmer le projet au niveau Free dans `config.yaml`, selon [API_KEYS.md](API_KEYS.md). Une connexion dans une fenêtre automatisée n'est pas nécessaire.
+Le script crée `.venv` et installe les bibliothèques Python. Ajouter ensuite au moins une clé Gemini selon [API_KEYS.md](API_KEYS.md), puis la clé ElevenLabs et le Voice ID selon [ELEVENLABS.md](ELEVENLABS.md). Une connexion dans une fenêtre automatisée n'est pas nécessaire.
 
 Si Windows bloque les scripts locaux, lancez cette commande pour cette seule exécution :
 
@@ -28,7 +28,7 @@ Le niveau gratuit de l'API est indépendant de votre abonnement AI Pro. Le diagn
 .\.venv\Scripts\python.exe -m pipelineia run
 ```
 
-Le diagnostic signale les éléments manquants. La démonstration et la production utilisent une voix française Windows installée, par exemple Microsoft Hortense. L'option `demo --silent` crée une démonstration silencieuse. Si aucune voix française n'est disponible, ajoutez le français et ses fonctions vocales dans les paramètres **Heure et langue** de Windows, puis relancez le diagnostic.
+Le diagnostic signale les éléments manquants sans consommer de crédits. La démonstration et la production utilisent la voix ElevenLabs configurée ; `demo --silent` vérifie le montage sans synthèse payante. La voix locale reste accessible avec `speech.provider:auto`, si une voix française Windows est installée.
 
 La commande `run` produit les fichiers sans publier. Pour publier aussi sur les plateformes activées et connectées dans `config.yaml` :
 

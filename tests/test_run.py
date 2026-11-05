@@ -72,6 +72,19 @@ def test_no_news_stops_before_generation_voice_render_or_publish(pipeline):
     assert State(pipeline["config"]["paths"]["state_db"]).get(result["episode_id"]) is None
 
 
+def test_elevenlabs_voice_change_invalidates_render_but_key_rotation_does_not(pipeline, monkeypatch):
+    pipeline["config"]["speech"] = {"provider": "elevenlabs", "elevenlabs": {"model_id": "configured-model"}}
+    monkeypatch.setenv("ELEVENLABS_VOICE_ID", "first-voice")
+    monkeypatch.setenv("ELEVENLABS_API_KEY", "first-secret")
+    run.run_episode(pipeline["config"])
+    monkeypatch.setenv("ELEVENLABS_API_KEY", "second-secret")
+    run.run_episode(pipeline["config"])
+    assert pipeline["speech"].call_count == 1
+    monkeypatch.setenv("ELEVENLABS_VOICE_ID", "second-voice")
+    run.run_episode(pipeline["config"])
+    assert pipeline["speech"].call_count == pipeline["renderer"].call_count == 2
+
+
 def test_same_day_reuses_script_and_verified_mp4(pipeline):
     config_before = copy.deepcopy(pipeline["config"])
     first = run.run_episode(pipeline["config"], publish=True)
