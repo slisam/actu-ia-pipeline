@@ -1,28 +1,21 @@
-# Environnement Python
+.venv/
 venv/
 __pycache__/
 *.py[cod]
-*$py.class
 .pytest_cache/
-
-# Fichiers d'environnement
 .env
-
-# Sorties et logs
+.env.*
+!.env.example
 output/
 logs/
-*.log
-
-# Base de données
-data/*.db
-
-# Secrets YouTube et OAuth
+data/
+*.sqlite3*
+*.db
+*.lock
+*.secret.json
 client_secret*.json
 token*.json
 credentials.json
-
-# IDE
+.gemini/
 .vscode/
 .idea/
-*.swp
-*.swo
