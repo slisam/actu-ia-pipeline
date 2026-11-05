@@ -36,7 +36,7 @@ def doctor(config: dict) -> int:
         pool = readiness(config)
         checks["cles_gemini"] = pool
         checks["api_gratuite_configuree"] = any(item.get("ready", False) for item in pool.values())
-        checks["api_note"] = "Présence locale uniquement : niveau gratuit et droits du projet à vérifier dans AI Studio. Un quota atteint suspend tous les appels Gemini."
+        checks["api_note"] = "Présence locale uniquement : niveau gratuit et droits du projet à vérifier dans AI Studio. Un quota atteint met son projet en pause ; une clé d'un autre projet disponible est essayée immédiatement."
     elif provider == "gemini_browser":
         profile = Path(config.get("browser", {}).get("profile_dir", "data/google-browser"))
         if not profile.is_absolute():

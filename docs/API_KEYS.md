@@ -28,11 +28,11 @@ Ce drapeau enregistre votre vérification ; il ne peut pas bloquer une facturati
 
 - Une clé invalide, révoquée ou non autorisée est écartée ; une autre clé configurée peut être essayée dans le plafond global.
 - Un problème réseau peut donner lieu à un essai sur une autre clé, sans boucle illimitée.
-- **Un quota atteint (HTTP429) suspend tous les appels Gemini de cette application.** Le pipeline respecte le délai annoncé par Google, puis réessaie lors d'une prochaine exécution. Une limite quotidienne reconnue attend le prochain renouvellement.
+- **Un quota atteint (HTTP429) déclenche immédiatement l'essai d'une clé d'un autre projet disponible.** Le projet concerné et toutes ses clés sont mis en pause jusqu'au délai annoncé par Google. Une limite quotidienne reconnue attend le prochain renouvellement de ce projet. Les appels suivants, y compris la vérification du script, ignorent les projets encore en pause.
 - Les compteurs et délais sont enregistrés dans SQLite et survivent aux redémarrages. Les quotas journaliers locaux utilisent `America/Los_Angeles`, comme le renouvellement RPD de Gemini.
 - Les quatre clés partagent le plafond applicatif `llm.daily_request_limit` : 12 tentatives réseau par jour par défaut. Ce plafond prudent est un choix local, pas le quota gratuit garanti par Google.
 
-Les limites officielles s'appliquent **au projet, pas à la clé**. Changer de clé dans un même projet n'augmente rien. Google interdit de contourner les limites documentées ; ce mécanisme est un secours d'identifiants, pas un multiplicateur de quotas gratuits. [Limites Gemini](https://ai.google.dev/gemini-api/docs/rate-limits), [conditions section2.d](https://developers.google.com/terms).
+Les limites officielles s'appliquent **au projet, pas à la clé**. Pour que la bascule sur quota soit utile, les clés doivent appartenir à des projets différents disposant de leur propre quota. Le pipeline ne crée aucun compte ni projet et n'augmente aucun quota distant. Si tous les projets sont indisponibles, ou si un plafond local est atteint, il s'arrête. [Limites Gemini](https://ai.google.dev/gemini-api/docs/rate-limits).
 
 ## Vérifier et démarrer
 

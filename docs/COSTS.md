@@ -18,7 +18,7 @@ Pour cette utilisation interne de production vidéo, le pipeline utilise des art
 
 Quatre emplacements de clés sont disponibles ; une seule clé fonctionnelle suffit. Les limites officielles Gemini s'appliquent au **projet**, pas à la clé. Des clés du même projet partagent donc leurs limites. Les clés sont gardées uniquement dans `.env` local. [Procédure de connexion](API_KEYS.md).
 
-La bascule sert au secours d'une clé invalide ou révoquée et aux incidents temporaires. **Un HTTP429 suspend tous les appels Gemini de cette application**, quel que soit le projet des autres clés. Le délai Google est respecté ; une limite quotidienne reconnue attend le renouvellement. Les conditions Google interdisent de contourner les limitations documentées. [Conditions section 2.d](https://developers.google.com/terms).
+La bascule intervient sur clé invalide, incident temporaire ou quota atteint. **Sur HTTP429, le pipeline met le projet concerné en pause puis essaie immédiatement une clé d'un autre projet disponible.** Les clés du même projet partagent cette pause. Le délai Google est respecté pour chaque projet ; une limite quotidienne reconnue attend son renouvellement. Aucun compte ou projet n'est créé automatiquement et aucun quota distant n'est augmenté. [Limites officielles](https://ai.google.dev/gemini-api/docs/rate-limits).
 
 Les plafonds locaux par défaut sont :
 
