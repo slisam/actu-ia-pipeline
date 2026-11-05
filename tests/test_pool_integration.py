@@ -139,8 +139,8 @@ def test_http_budget_error_stops_editorial_pipeline_without_new_pool(config, fak
 
 
 def test_pool_quota_error_is_exposed_safely_and_no_verifier_is_called(config, fake_pool_module):
-    fake_pool_module.APIPool.replies = [fake_pool_module.PoolError("Quota Gemini atteint : tous les comptes sont suspendus.")]
-    with pytest.raises(writer.WriterError, match="tous les comptes sont suspendus"):
+    fake_pool_module.APIPool.replies = [fake_pool_module.PoolError("Tous les projets Gemini sont indisponibles.")]
+    with pytest.raises(writer.WriterError, match="Tous les projets Gemini"):
         writer.write_script(ARTICLES, config)
     assert len(fake_pool_module.APIPool.instances) == 1
     assert fake_pool_module.APIPool.instances[0].requests == 1

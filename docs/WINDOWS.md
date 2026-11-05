@@ -1,6 +1,6 @@
 # Démarrage sur Windows
 
-Cette installation utilise Gemini API au niveau gratuit, avec jusqu'à quatre clés de secours. Le montage et la voix fonctionnent localement. Les clés API et les comptes de publication demandent une configuration initiale. Un quota Gemini atteint met l'application en pause ; aucune rotation de comptes ne prolonge ce quota.
+Cette installation utilise Gemini API au niveau gratuit, avec jusqu'à quatre clés. Le montage et la voix fonctionnent localement. Les clés API et les comptes de publication demandent une configuration initiale. Un quota Gemini atteint met son projet en pause puis déclenche immédiatement l'essai d'une clé d'un autre projet disponible.
 
 ## 1. Préparer les outils
 

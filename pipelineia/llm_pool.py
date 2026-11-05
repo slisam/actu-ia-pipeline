@@ -1,4 +1,4 @@
-"""Clés Gemini de secours, budgets persistants et arrêt global sur quota."""
+"""Bascule entre projets Gemini, avec quotas et budgets persistants."""
 from __future__ import annotations
 
 import hashlib
@@ -23,7 +23,7 @@ class PoolError(RuntimeError):
 
 
 class QuotaExhausted(PoolError):
-    """Tous les appels de l'application attendent un renouvellement de quota."""
+    """Aucun projet disponible ou plafond applicatif atteint."""
 
 
 def _valid_slot(slot: dict, model: str) -> bool:
@@ -136,7 +136,7 @@ def _model_response(data: dict) -> dict:
 
 
 class APIPool:
-    """Réutilise les clés autorisées sans agréger les quotas de comptes Google."""
+    """Essaie immédiatement le projet suivant lorsqu'un quota est atteint."""
 
     def __init__(self, config: dict):
         self.settings = config.get("llm", {})
@@ -153,11 +153,15 @@ class APIPool:
             raise PoolError("Aucune clé gratuite configurée : renseigner .env, quota_group et free_tier_confirmed dans config.yaml.")
         self.path.parent.mkdir(parents=True, exist_ok=True)
         with self._connect() as db:
-            db.execute("CREATE TABLE IF NOT EXISTS llm_app_quota (id INTEGER PRIMARY KEY CHECK(id=1), blocked_until REAL NOT NULL DEFAULT 0)")
-            db.execute("INSERT OR IGNORE INTO llm_app_quota(id) VALUES(1)")
+            db.execute("BEGIN IMMEDIATE")
             db.execute("CREATE TABLE IF NOT EXISTS llm_daily_usage (day TEXT NOT NULL, scope TEXT NOT NULL, attempts INTEGER NOT NULL, PRIMARY KEY(day,scope))")
             db.execute("CREATE TABLE IF NOT EXISTS llm_credentials (fingerprint TEXT PRIMARY KEY, disabled INTEGER NOT NULL DEFAULT 0)")
-            db.execute("CREATE TABLE IF NOT EXISTS llm_project_cooldown (project TEXT PRIMARY KEY, until_time REAL NOT NULL)")
+            db.execute("CREATE TABLE IF NOT EXISTS llm_project_cooldown (project TEXT PRIMARY KEY, until_time REAL NOT NULL, reason TEXT NOT NULL DEFAULT 'network')")
+            columns = {row[1] for row in db.execute("PRAGMA table_info(llm_project_cooldown)")}
+            if "reason" not in columns:
+                db.execute("ALTER TABLE llm_project_cooldown ADD COLUMN reason TEXT NOT NULL DEFAULT 'network'")
+            # L'ancien blocage global n'identifie pas le projet refusé. Il n'est
+            # plus utilisé ; les compteurs journaliers restent conservés.
 
     def _connect(self) -> sqlite3.Connection:
         """Connexion locale avec attente limitée des verrous concurrents."""
@@ -168,9 +172,6 @@ class APIPool:
         now = time.time()
         with self._connect() as db:
             db.execute("BEGIN IMMEDIATE")
-            until = db.execute("SELECT blocked_until FROM llm_app_quota WHERE id=1").fetchone()[0]
-            if until > now:
-                raise QuotaExhausted("Quota Gemini en pause ; attendre le délai de reprise, sans changer de compte.")
             row = db.execute("SELECT attempts FROM llm_daily_usage WHERE day=? AND scope='application'", (_day(now),)).fetchone()
             if row and row[0] >= self.daily_limit:
                 raise QuotaExhausted("Plafond quotidien partagé atteint ; reprendre après minuit Pacific.")
@@ -187,18 +188,24 @@ class APIPool:
         with self._connect() as db:
             db.execute("INSERT OR REPLACE INTO llm_credentials VALUES(?,1)", (fingerprint,))
 
-    def _pause(self, until: float) -> None:
-        """Une limite distante suspend toutes les clés de l'application."""
+    def _pause(self, project: str, until: float, reason: str = "quota") -> None:
+        """Suspend uniquement les clés rattachées au projet concerné."""
         with self._connect() as db:
-            db.execute("UPDATE llm_app_quota SET blocked_until=MAX(blocked_until,?) WHERE id=1", (until,))
+            db.execute("INSERT INTO llm_project_cooldown(project,until_time,reason) VALUES(?,?,?) ON CONFLICT(project) DO UPDATE SET reason=CASE WHEN excluded.until_time >= until_time THEN excluded.reason ELSE reason END,until_time=MAX(until_time,excluded.until_time)", (project, until, reason))
 
     def _cooldown(self, project: str) -> None:
         """Évite de répéter immédiatement un incident réseau sur le même projet."""
+        self._pause(project, time.time() + 30, reason="network")
+
+    def _has_quota_pause(self) -> bool:
+        """Distingue l'épuisement des projets d'une erreur d'identifiants."""
+        projects = sorted({slot["quota_group"] for slot in self.slots})
+        placeholders = ",".join("?" for _ in projects)
         with self._connect() as db:
-            db.execute("INSERT INTO llm_project_cooldown VALUES(?,?) ON CONFLICT(project) DO UPDATE SET until_time=MAX(until_time,excluded.until_time)", (project, time.time() + 30))
+            return db.execute(f"SELECT 1 FROM llm_project_cooldown WHERE project IN ({placeholders}) AND reason='quota' AND until_time>? LIMIT 1", (*projects, time.time())).fetchone() is not None
 
     def generate(self, prompt: str) -> dict:
-        """Effectue des tentatives bornées ; un HTTP429 arrête immédiatement le pool."""
+        """Bascule sans attente vers un autre projet disponible après un HTTP429."""
         if not isinstance(prompt, str) or not prompt.strip() or len(prompt) > 120_000:
             raise ValueError("Prompt API absent ou trop long.")
         seen_keys = set()
@@ -229,8 +236,8 @@ class APIPool:
                 continue
             data = _payload(response)
             if response.status_code == 429:
-                self._pause(_retry_at(response, data, time.time()))
-                raise QuotaExhausted("Quota Gemini atteint ; tous les comptes sont en pause jusqu'au délai de reprise.")
+                self._pause(slot["quota_group"], _retry_at(response, data, time.time()))
+                continue
             if response.status_code in {401, 403} or (response.status_code == 400 and "API_KEY_INVALID" in json.dumps(data)):
                 self._disable(fingerprint)
                 continue
@@ -240,4 +247,6 @@ class APIPool:
             if response.status_code != 200:
                 raise PoolError(f"Gemini API a renvoyé HTTP {response.status_code} ; aucun changement de niveau payant.")
             return _model_response(data)
+        if self._has_quota_pause():
+            raise QuotaExhausted("Aucun autre projet Gemini disponible ; attendre le renouvellement des quotas ou vérifier les clés restantes.")
         raise PoolError("Aucune clé de secours disponible ; vérifier les clés autorisées ou attendre la reprise réseau.")

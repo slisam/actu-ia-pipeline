@@ -1,4 +1,4 @@
-"""Contrats HTTP, quotas globaux et confidentialité du pool Gemini."""
+"""Contrats HTTP, quotas par projet et confidentialité du pool Gemini."""
 import copy
 import json
 import sqlite3
@@ -40,7 +40,8 @@ def test_success_contract_and_no_redirect(config, monkeypatch):
     assert post.call_args.kwargs["json"]["generationConfig"]["responseMimeType"] == "application/json"
 
 
-def test_429_pauses_different_projects_and_survives_restart(config, monkeypatch):
+def test_429_project_pause_survives_restart_and_expires(config, monkeypatch):
+    config["llm"]["api_pool"] = config["llm"]["api_pool"][:1]
     now = [1_800_000_000.0]
     monkeypatch.setattr(pool.time, "time", lambda: now[0])
     post = Mock(return_value=response(429, {}, {"Retry-After": "120"}))
@@ -49,7 +50,7 @@ def test_429_pauses_different_projects_and_survives_restart(config, monkeypatch)
         pool.APIPool(config).generate("Annonce")
     with pytest.raises(pool.QuotaExhausted):
         pool.APIPool(config).generate("Autre annonce")
-    assert post.call_count == 1  # Aucune rotation vers les trois autres projets.
+    assert post.call_count == 1
     now[0] += 121
     post.return_value = response()
     assert pool.APIPool(config).generate("Reprise") == {"ok": True}
@@ -196,7 +197,7 @@ def test_daily_quota_waits_until_pacific_midnight(config, monkeypatch):
     with pytest.raises(pool.QuotaExhausted):
         pool.APIPool(config).generate("Texte")
     with sqlite3.connect(config["paths"]["state_db"]) as db:
-        until = db.execute("SELECT blocked_until FROM llm_app_quota").fetchone()[0]
+        until = db.execute("SELECT until_time FROM llm_project_cooldown WHERE project='real-project-0'").fetchone()[0]
     assert until == datetime(2026, 11, 6, 8, tzinfo=timezone.utc).timestamp()
 
 

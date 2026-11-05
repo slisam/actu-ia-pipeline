@@ -12,7 +12,7 @@ Des actualités IA en français transformées en vidéos de **60 secondes** : ac
 4. Cartes graphiques originales, montage FFmpeg et sous-titres.
 5. Exports **1080×1920**, **1080×1080** et **1920×1080**, puis publication sur les comptes configurés.
 
-Une seule clé suffit pour démarrer ; quatre emplacements sont prévus pour le secours d'identifiants. Une clé invalide ou révoquée peut être remplacée par la suivante. **Un quota atteint suspend tous les appels Gemini de cette application** jusqu'au délai de reprise, sans rotation de comptes pour prolonger le quota. Les appels sont bornés par épisode et par jour, avec des compteurs persistants.
+Une seule clé suffit pour démarrer ; quatre emplacements sont prévus. **Lorsqu'un quota est atteint, le pipeline essaie immédiatement une clé d'un autre projet disponible.** Les clés d'un même projet partagent leur pause jusqu'au délai de reprise Google. Les appels sont bornés par épisode et par jour, avec des compteurs persistants. Si aucun projet n'est disponible, l'épisode attend la reprise des quotas.
 
 Les clés doivent appartenir à des projets au niveau gratuit, sans facturation payante activée. Le code n'active aucune facturation ; il ne peut cependant pas vérifier le statut distant du projet ni empêcher une facturation modifiée hors du pipeline. La voix et les cartes originales ne consomment aucune API. L'électricité, le calcul et l'hébergement restent à compter. [Connexion des clés](docs/API_KEYS.md) · [Coûts](docs/COSTS.md).
 

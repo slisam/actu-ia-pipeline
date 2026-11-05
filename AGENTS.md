@@ -5,7 +5,7 @@ Objectif : actualités IA sourcées en français, hook immédiat, vidéos de 60 
 
 - Python 3.11+, modules indépendants dans pipelineia, configuration dans config.yaml.
 - Fournisseur par défaut : Gemini API au niveau gratuit, voix locale et Pillow/FFmpeg. Le navigateur et CLI restent expérimentaux après refus de connexion Google lors des essais.
-- Quatre clés peuvent servir de secours d'identifiants. Un HTTP429 suspend tous les appels Gemini de cette application ; aucune rotation de comptes pour prolonger un quota épuisé.
+- À la demande explicite de l'utilisateur, un HTTP429 suspend le projet concerné puis déclenche immédiatement l'essai d'une clé d'un autre projet configuré. Les clés du même projet partagent leur pause ; les autres restent utilisables.
 - Respecter les limites projet, les délais de reprise et un plafond global d'appels. La confirmation du niveau gratuit est locale et ne prouve pas le statut de facturation distant.
 - Ne jamais enregistrer de clés, cookies, jetons OAuth ou bases de publication dans Git.
 - Prompts dans prompts/*.md ; modèles et voix configurables.
